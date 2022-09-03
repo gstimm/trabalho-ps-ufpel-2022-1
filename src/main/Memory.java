@@ -1,10 +1,13 @@
+package main;
+
 public class Memory {
-    private final int memorySize = 2048;
+    private int memorySize = 2048;
     
     private char[] memory;
 
     Memory(int numberWords) {
-        memory = new char[numberWords];
+        memorySize = numberWords;
+        memory = new char[memorySize];
     }
 
     public char getMemoryPosition(int address) throws IndexOutOfBoundsException {
