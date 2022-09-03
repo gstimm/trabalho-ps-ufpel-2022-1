@@ -51,8 +51,7 @@ public class Registers {
     public void setSR(String val) { this.SR = val; }
 
 
-    // ************ other methods ????
-
+    // Reset Registers
     public void resetRegisters() {
         PC = RI = REM = RBM = ACC = DX = SP = SI = IP = SR = "0";
     }
