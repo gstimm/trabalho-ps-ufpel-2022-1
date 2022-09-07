@@ -1,9 +1,9 @@
 package main.instructions;
 
 import main.Instruction;
-import main.Registers;
 import main.AddressingMode;
 import java.util.HashSet;
+import main.Memory;
 
 
 public class Write extends Instruction {
@@ -18,10 +18,7 @@ public class Write extends Instruction {
 
     }
 
-    @Override
-    public void doOperation(Registers registers) {
-        return;
-    }
-
-    
+    public void doOperation(Memory memory, int addressOperand) {
+         memory.getMemoryPosition(addressOperand);
+    }    
 }

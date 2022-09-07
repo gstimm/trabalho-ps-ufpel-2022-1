@@ -1,6 +1,7 @@
 package main.instructions;
 
 import main.Instruction;
+import main.Memory;
 import main.Registers;
 import java.util.HashSet;
 import main.AddressingMode;
@@ -12,8 +13,8 @@ public class Ret extends Instruction {
         this.setAddressingModesSuported(modes);
     }
     
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+    public static void doOperation(Registers registers, Memory memory) {
+        registers.setACC(memory.getMemoryPosition(registers.getSP()));
+        registers.setSP((char) (registers.getSP() - 1));
     }
 }

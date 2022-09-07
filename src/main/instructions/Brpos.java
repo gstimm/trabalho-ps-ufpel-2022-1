@@ -3,6 +3,7 @@ package main.instructions;
 import java.util.HashSet;
 import main.AddressingMode;
 import main.Instruction;
+import main.Memory;
 import main.Registers;
 
 public class Brpos extends Instruction {
@@ -13,9 +14,11 @@ public class Brpos extends Instruction {
         modes.add(AddressingMode.INDIRECT);
         this.setAddressingModesSuported(modes);
     }
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+
+    public static void doOperation(Registers registers, Memory memory, int addressOperand) {
+        if(registers.getACC() > 0){
+            registers.setPC(memory.getMemoryPosition(addressOperand));
+        }
     }
     
 }

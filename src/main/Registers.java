@@ -10,59 +10,65 @@ public class Registers {
     
     
     public Registers() {
-        PC = 0;
-        SP = 0;
-        ACC = 0;
-        MOP = 0;
-        RI = 0;
-        RE = 0;
+        this.PC = 0;
+        this.SP = 0;
+        this.ACC = 0;
+        this.MOP = 0;
+        this.RI = 0;
+        this.RE = 0;
     }
 
     public char getPC() {
-        return PC;
+        return this.PC;
     }
     public void setPC(char pC) {
-        PC = pC;
+        this.PC = pC;
     }
     public char getSP() {
-        return SP;
+        return this.SP;
     }
     public void setSP(char sP) {
-        SP = sP;
+        this.SP = sP;
     }
     public char getACC() {
-        return ACC;
+        return this.ACC;
     }
     public void setACC(char aCC) {
-        ACC = aCC;
+        this.ACC = aCC;
     }
     public byte getMOP() {
-        return MOP;
+        return this.MOP;
     }
     public void setMOP(byte mOP) {
-        MOP = mOP;
+        this.MOP = mOP;
     }
     public char getRI() {
-        return RI;
+        return this.RI;
     }
     public void setRI(char rI) {
-        RI = rI;
+        this.RI = rI;
     }
     public char getRE() {
-        return RE;
+        return this.RE;
     }
     public void setRE(char rE) {
-        RE = rE;
+        this.RE = rE;
     }
 
     @Override
     public String toString(){
-        String result = "PC  = " + (int) PC + "\n" +
-                        "SP  = " + (int) SP + "\n" +
-                        "ACC = " + (int) ACC + "\n" +
-                        "MOP = " + (int) MOP + "\n" +
-                        "RI  = " + (int) RI + "\n" +
-                        "RE  = " + (int) RE + "\n";
+        String result = "PC  = " + (int) this.PC + "\n" +
+                        "SP  = " + (int) this.SP + "\n" +
+                        "ACC = " + (int) this.ACC + "\n" +
+                        "MOP = " + (int) this.MOP + "\n" +
+                        "RI  = " + (int) this.RI + "\n" +
+                        "RE  = " + (int) this.RE + "\n";
         return result;
     }
+    public void incrementACC(char value){
+        this.ACC += value;
+    }   
+    public void incrementSP(char value){
+        this.SP += value;
+    }   
 }

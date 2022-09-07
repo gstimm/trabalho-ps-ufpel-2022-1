@@ -1,7 +1,7 @@
 package main.instructions;
 
 import java.util.HashSet;
-
+import main.Memory;
 import main.AddressingMode;
 import main.Instruction;
 import main.Registers;
@@ -15,9 +15,9 @@ public class Mult extends Instruction {
         modes.add(AddressingMode.IMMEDIATE);
         this.setAddressingModesSuported(modes);
     }
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+    
+    public static void doOperation(Registers registers, Memory memory, int addressOperand) {
+        registers.setACC((char)(registers.getACC() * memory.getMemoryPosition(addressOperand)));
     }
     
 }

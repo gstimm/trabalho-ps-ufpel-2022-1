@@ -17,7 +17,14 @@ public abstract class Instruction {
         addressingModesSuported = null;
     }
     
-    public abstract void doOperation(Registers registers);
+    //public abstract void doOperation(Registers registers);
+
+    public String toString(){
+        return "MNEMONIC:\t" + mnemonic + 
+               "\nOPCODE:\t\t" + opcode + 
+               "\nSIZE:\t\t" + instructionSize + 
+               "\nOPERANDS:\t" + numberOfOperands + "\n";
+    }
 
     public String getMnemonic() {
         return mnemonic;

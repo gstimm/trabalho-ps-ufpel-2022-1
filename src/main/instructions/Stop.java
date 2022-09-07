@@ -3,7 +3,6 @@ import java.util.HashSet;
 
 import main.AddressingMode;
 import main.Instruction;
-import main.Registers;
 
 public class Stop extends Instruction {
     public Stop(){
@@ -13,9 +12,5 @@ public class Stop extends Instruction {
         modes.add(AddressingMode.DIRECT);
         modes.add(AddressingMode.INDIRECT);
         this.setAddressingModesSuported(modes);
-    }
-    @Override
-    public void doOperation(Registers registers) {
-        return;
     }
 }

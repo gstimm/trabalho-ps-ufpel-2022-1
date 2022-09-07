@@ -2,6 +2,7 @@ package main.instructions;
 
 import java.util.HashSet;
 import main.Instruction;
+import main.Memory;
 import main.Registers;
 import main.AddressingMode;
 
@@ -15,9 +16,9 @@ public class Copy extends Instruction {
         this.setAddressingModesSuported(modes);
     }
     
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+    
+    public static void doOperation(Registers registers, Memory memory, int addressOperand1, int addressOperand2) {
+        memory.setMemoryPosition(addressOperand1, memory.getMemoryPosition(addressOperand2));
     }
 
 }

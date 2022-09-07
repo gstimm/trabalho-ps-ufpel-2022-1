@@ -4,6 +4,8 @@ import main.Instruction;
 import main.Registers;
 import main.AddressingMode;
 import java.util.HashSet;
+import main.Memory;
+import main.Registers;
 
 
 public class Store extends Instruction {
@@ -15,8 +17,8 @@ public class Store extends Instruction {
 
         this.setAddressingModesSuported(modes);
     }
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+
+    public static void doOperation(Registers registers, Memory memory, int addressOperand) {
+        memory.setMemoryPosition(addressOperand, registers.getACC());
     }
 }

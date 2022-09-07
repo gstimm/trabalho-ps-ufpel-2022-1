@@ -2,6 +2,7 @@ package main.instructions;
 
 import java.util.HashSet;
 import main.Instruction;
+import main.Memory;
 import main.Registers;
 import main.AddressingMode;
 
@@ -14,9 +15,10 @@ public class Call extends Instruction {
         this.setAddressingModesSuported(modes);
     }
     
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+   
+    public static void doOperation(Registers registers, Memory memory, int addressOperand) {
+        registers.incrementSP((char) 1);
+        memory.setMemoryPosition(registers.getSP(), registers.getPC());
+        registers.setPC(memory.getMemoryPosition(addressOperand));
     }
-
 }

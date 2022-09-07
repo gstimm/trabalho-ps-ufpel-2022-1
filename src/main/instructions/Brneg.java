@@ -2,6 +2,7 @@ package main.instructions;
 
 import java.util.HashSet;
 import main.Instruction;
+import main.Memory;
 import main.Registers;
 import main.AddressingMode;
 
@@ -14,8 +15,9 @@ public class Brneg extends Instruction {
         this.setAddressingModesSuported(modes);
     }
     
-    @Override
-    public void doOperation(Registers registers) {
-        return;
+    public static void doOperation(Registers registers, Memory memory, int addressOperand) {
+        if (registers.getACC() < 0){
+            registers.setPC(memory.getMemoryPosition(addressOperand));
+        }
     }
 }
