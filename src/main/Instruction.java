@@ -2,6 +2,8 @@ package main;
 
 import java.util.HashSet;
 
+import main.errors.StackOverflow;
+
 public abstract class Instruction {
     private String mnemonic;
     private int opcode;
@@ -17,7 +19,7 @@ public abstract class Instruction {
         addressingModesSuported = null;
     }
     
-    //public abstract void doOperation(Registers registers);
+    public abstract void doOperation(Registers registers, Memory memory) throws StackOverflow;
 
     public String toString(){
         return "MNEMONIC:\t" + mnemonic + 

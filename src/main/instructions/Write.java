@@ -4,9 +4,13 @@ import main.Instruction;
 import main.AddressingMode;
 import java.util.HashSet;
 import main.Memory;
+import main.OneOperandInstruction;
+import main.Registers;
 
 
-public class Write extends Instruction {
+public class Write extends Instruction implements OneOperandInstruction {
+    private char operand1;
+
     public Write() {
         super("WRITE", 8, 2, 1);
         HashSet<AddressingMode> modes = new HashSet<AddressingMode>();
@@ -18,7 +22,15 @@ public class Write extends Instruction {
 
     }
 
-    public void doOperation(Memory memory, int addressOperand) {
-         memory.getMemoryPosition(addressOperand);
-    }    
+    public void doOperation(Registers registers, Memory memory) {
+        memory.getMemoryPosition(operand1);
+    } 
+
+    public char getOperand1(){
+        return this.operand1;
+    }
+    
+    public void setOperand1(char value){
+        this.operand1 = value;
+    }   
 }

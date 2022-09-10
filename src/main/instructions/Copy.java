@@ -4,11 +4,15 @@ import java.util.HashSet;
 import main.Instruction;
 import main.Memory;
 import main.Registers;
+import main.TwoOperandInstruction;
 import main.AddressingMode;
 
-public class Copy extends Instruction {
+public class Copy extends Instruction implements TwoOperandInstruction{
+    private char operand1;
+    private char operand2;
+
     public Copy(){
-        super("COPY", 13, 3, 1);
+        super("COPY", 13, 3, 2);
         HashSet<AddressingMode> modes = new HashSet<AddressingMode>();
         modes.add(AddressingMode.DIRECT);    
         modes.add(AddressingMode.INDIRECT);
@@ -17,8 +21,28 @@ public class Copy extends Instruction {
     }
     
     
-    public static void doOperation(Registers registers, Memory memory, int addressOperand1, int addressOperand2) {
-        memory.setMemoryPosition(addressOperand1, memory.getMemoryPosition(addressOperand2));
+    public void doOperation(Registers registers, Memory memory) {
+        memory.setMemoryPosition(operand1, memory.getMemoryPosition(operand2));
+    }
+
+
+    public char getOperand1() {
+        return operand1;
+    }
+
+
+    public void setOperand1(char operand1) {
+        this.operand1 = operand1;
+    }
+
+
+    public char getOperand2() {
+        return operand2;
+    }
+
+
+    public void setOperand2(char operand2) {
+        this.operand2 = operand2;
     }
 
 }

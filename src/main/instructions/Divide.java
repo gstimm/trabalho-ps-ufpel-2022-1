@@ -2,11 +2,14 @@ package main.instructions;
 
 import main.Instruction;
 import main.Memory;
+import main.OneOperandInstruction;
 import main.Registers;
 import main.AddressingMode;
 import java.util.HashSet;
 
-public class Divide extends Instruction {
+public class Divide extends Instruction implements OneOperandInstruction{
+    private char operand1;
+
     public Divide(){
         super("DIVIDE", 10, 2, 1);
         HashSet<AddressingMode> modes = new HashSet<AddressingMode>();
@@ -16,8 +19,15 @@ public class Divide extends Instruction {
         this.setAddressingModesSuported(modes);
     }
 
+    public void doOperation(Registers registers, Memory memory) {
+        registers.setACC((char) (registers.getACC() / memory.getMemoryPosition(operand1)));
+    }
+
+    public char getOperand1(){
+        return this.operand1;
+    }
     
-    public void doOperation(Registers registers, Memory memory, int addressOperand) {
-        registers.setACC((char) (registers.getACC() / memory.getMemoryPosition(addressOperand)));
+    public void setOperand1(char value){
+        this.operand1 = value;
     }
 }

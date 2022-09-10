@@ -2,7 +2,6 @@ package main;
 
 public class Memory {
     private int memorySize = 2048;
-    
     private char[] memory;
 
     Memory(int numberWords) {
@@ -41,4 +40,15 @@ public class Memory {
             System.out.println("Memory[" + i + "] = " + (int)memory[i]);
         }
     }
+    public void printMemoryInRange(int startIndex, int finishIndex) throws IndexOutOfBoundsException{
+        if (startIndex < 0 || finishIndex > memorySize){
+            throw new IndexOutOfBoundsException();
+        }
+        int start = startIndex < finishIndex ? startIndex : finishIndex;
+        int end = startIndex > finishIndex ? startIndex : finishIndex;
+        for(int i = start; i < end; i++) {
+            System.out.println("Memory[" + i + "] = " + (int)memory[i]);
+        }
+    }
+    
 }
