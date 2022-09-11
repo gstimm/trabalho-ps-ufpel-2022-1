@@ -2,8 +2,6 @@ package main;
 
 import java.util.HashSet;
 
-import main.errors.StackOverflow;
-
 public abstract class Instruction {
     private String mnemonic;
     private int opcode;
@@ -19,7 +17,7 @@ public abstract class Instruction {
         addressingModesSuported = null;
     }
     
-    public abstract void doOperation(Registers registers, Memory memory) throws StackOverflow;
+    public abstract void doOperation(Registers registers, Memory memory);
 
     public String toString(){
         return "MNEMONIC:\t" + mnemonic + 
@@ -32,32 +30,16 @@ public abstract class Instruction {
         return mnemonic;
     }
 
-    public void setMnemonic(String mnemonic) {
-        this.mnemonic = mnemonic;
-    }
-
     public int getOpcode() {
         return opcode;
-    }
-
-    public void setOpcode(int opcode) {
-        this.opcode = opcode;
     }
 
     public int getInstructionSize() {
         return instructionSize;
     }
 
-    public void setInstructionSize(int instructionSize) {
-        this.instructionSize = instructionSize;
-    }
-
     public int getNumberOfOperands() {
         return numberOfOperands;
-    }
-
-    public void setNumberOfOperands(int numberOfOperands) {
-        this.numberOfOperands = numberOfOperands;
     }
 
     public HashSet<AddressingMode> getAddressingModesSuported() {

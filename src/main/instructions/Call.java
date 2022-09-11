@@ -5,7 +5,6 @@ import main.Instruction;
 import main.Memory;
 import main.OneOperandInstruction;
 import main.Registers;
-import main.errors.StackOverflow;
 import main.AddressingMode;
 
 public class Call extends Instruction implements OneOperandInstruction{
@@ -19,10 +18,9 @@ public class Call extends Instruction implements OneOperandInstruction{
         this.setAddressingModesSuported(modes);
     }
     
-   
-    public void doOperation(Registers registers, Memory memory) throws StackOverflow{
-        registers.incrementSP((char) 1);
+    public void doOperation(Registers registers, Memory memory){
         memory.setMemoryPosition(registers.getSP(), registers.getPC());
+        registers.incrementSP((char) 1);
         registers.setPC(memory.getMemoryPosition(operand1));
     }
 
@@ -32,5 +30,9 @@ public class Call extends Instruction implements OneOperandInstruction{
     
     public void setOperand1(char value){
         this.operand1 = value;
+    }
+
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
     }
 }

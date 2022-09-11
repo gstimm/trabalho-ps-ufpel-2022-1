@@ -24,8 +24,8 @@ public enum AddressingMode {
         if (mode.equals(IMMEDIATE.toString())) return IMMEDIATE;
         throw new UndefinedAddressingMode("The string does not correspond to any Addressing Mode");
     }
-    public static AddressingMode addressingModeOperand1(char opcode){
-        if ((opcode & 0b10000) != 0){
+    public static AddressingMode addressingModeByOpcode(char opcode){
+        if ((opcode & 0b110000) != 0){
             return INDIRECT;
         }
         if ((opcode & 0b1000000) != 0){
@@ -33,14 +33,4 @@ public enum AddressingMode {
         }
         return DIRECT;
     }
-    public static AddressingMode addressingModeOperand2(char opcode){
-        if ((opcode & 0b100000) != 0){
-            return INDIRECT;
-        }
-        if ((opcode & 0b1000000) != 0){
-            return IMMEDIATE;
-        }
-        return DIRECT;
-    }
-
 }

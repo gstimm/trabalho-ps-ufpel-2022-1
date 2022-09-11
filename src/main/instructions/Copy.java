@@ -45,4 +45,11 @@ public class Copy extends Instruction implements TwoOperandInstruction{
         this.operand2 = operand2;
     }
 
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode((char) (opcode & 0b0101111));
+    }
+
+    public AddressingMode getOperand2AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode((char) (opcode & 0b1011111));
+    }
 }

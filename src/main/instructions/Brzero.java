@@ -4,10 +4,11 @@ import java.util.HashSet;
 
 import main.Instruction;
 import main.Memory;
+import main.OneOperandInstruction;
 import main.Registers;
 import main.AddressingMode;
 
-public class Brzero extends Instruction {
+public class Brzero extends Instruction implements OneOperandInstruction {
     private char operand1;
     
     public Brzero(){
@@ -30,5 +31,9 @@ public class Brzero extends Instruction {
 
     public void setOperand1(char operand1) {
         this.operand1 = operand1;
+    }
+
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
     }
 }

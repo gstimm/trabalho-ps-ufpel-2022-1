@@ -29,4 +29,8 @@ public class Br extends Instruction implements OneOperandInstruction{
     public char getOperand1() {
         return this.operand1;
     }
+
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
+    }
 }

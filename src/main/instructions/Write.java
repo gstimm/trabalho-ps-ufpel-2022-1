@@ -19,11 +19,10 @@ public class Write extends Instruction implements OneOperandInstruction {
         modes.add(AddressingMode.INDIRECT);
 
         this.setAddressingModesSuported(modes);
-
     }
 
     public void doOperation(Registers registers, Memory memory) {
-        memory.getMemoryPosition(operand1);
+        System.out.println((int) memory.getMemoryPosition(operand1));
     } 
 
     public char getOperand1(){
@@ -32,5 +31,9 @@ public class Write extends Instruction implements OneOperandInstruction {
     
     public void setOperand1(char value){
         this.operand1 = value;
-    }   
+    }  
+    
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
+    }
 }

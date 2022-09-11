@@ -9,11 +9,9 @@ public class CPU {
     private ArrayList<Instruction> instructions;
     private Registers registers;
     private int index_current_instruction;
-    private char opcode_read;
-    private boolean halt_state;
 
-    public CPU(char stackSize, char stackStart){
-        registers = new Registers(stackSize, stackStart);
+    public CPU() {
+        registers = new Registers();
         instructions = new ArrayList<Instruction>();
         instructions.add(new Add());
         instructions.add(new Br());
@@ -31,7 +29,6 @@ public class CPU {
         instructions.add(new Store());
         instructions.add(new Sub());
         instructions.add(new Write());
-        halt_state = false;
     }
 
     public CPU(ArrayList<Instruction> instructions, Registers registers){
@@ -48,22 +45,22 @@ public class CPU {
     }
 
     private void fetch(Memory memory) throws UnknownInstrucion {
-        this.opcode_read = memory.getMemoryPosition(registers.getPC());
+        registers.setRI(memory.getMemoryPosition(registers.getPC()));
         registers.incrementPC();
-        char opcode = (char)(opcode_read & 0b1111);
+        
+        if (registers.getRI() >> 7 != 0){
+            throw new UnknownInstrucion("The instruction with the opcode " + (int) registers.getRI() + " is not in the CPU instruction set!!");
+        }
+        char opcode = (char)(registers.getRI() & 0b1111);
         identifyInstructionByOpcode(opcode);
          
         if (instructions.get(index_current_instruction) instanceof OneOperandInstruction){
             ((OneOperandInstruction) instructions.get(index_current_instruction)).setOperand1(registers.getPC());
             registers.incrementPC();
-            return;
         }
         if (instructions.get(index_current_instruction) instanceof TwoOperandInstruction){
-            ((TwoOperandInstruction) instructions.get(index_current_instruction)).setOperand1(registers.getPC());
-            registers.incrementPC();
             ((TwoOperandInstruction) instructions.get(index_current_instruction)).setOperand2(registers.getPC());
             registers.incrementPC();
-            return;
         }
     }
     
@@ -71,7 +68,7 @@ public class CPU {
         Instruction instruction = instructions.get(index_current_instruction);
         
         if (instruction instanceof OneOperandInstruction){
-            switch (AddressingMode.addressingModeOperand1(opcode_read)){
+            switch (((OneOperandInstruction) instruction).getOperand1AddressingMode(registers.getRI())){
                 case DIRECT:
                     ((OneOperandInstruction) instruction).setOperand1(memory.getMemoryPosition(
                         ((OneOperandInstruction) instruction).getOperand1()
@@ -86,25 +83,9 @@ public class CPU {
                     break;
                     
             }
-            return;
         }
         if (instructions.get(index_current_instruction) instanceof TwoOperandInstruction){
-            switch (AddressingMode.addressingModeOperand1((char) (opcode_read & 0b111111))){
-                case DIRECT:
-                    ((TwoOperandInstruction) instruction).setOperand1(memory.getMemoryPosition(
-                        ((TwoOperandInstruction) instruction).getOperand1()
-                    ));
-                    break;
-                case INDIRECT:
-                    ((TwoOperandInstruction) instruction).setOperand1(memory.getMemoryPosition(
-                        memory.getMemoryPosition(((TwoOperandInstruction) instruction).getOperand1()
-                    )));
-                    break;
-                case IMMEDIATE:
-                    break;
-                    
-            }
-            switch (AddressingMode.addressingModeOperand2(opcode_read)){
+            switch (((TwoOperandInstruction) instruction).getOperand2AddressingMode(registers.getRI())){
                 case DIRECT:
                     ((TwoOperandInstruction) instruction).setOperand2(memory.getMemoryPosition(
                         ((TwoOperandInstruction) instruction).getOperand2()
@@ -116,21 +97,17 @@ public class CPU {
                     )));
                     break;
                 case IMMEDIATE:
-                    break;
-                    
+                    break; 
             }
-            return;
         }
     }
     
-    private void execute(Memory memory) throws StackOverflow {
-        if (instructions.get(index_current_instruction) instanceof Stop) {
-            halt_state = true;
-        }
+    private void execute(Memory memory){
+        System.out.println(instructions.get(index_current_instruction).toString());
         instructions.get(index_current_instruction).doOperation(registers, memory);
     }
 
-    public void cycle(Memory memory) throws UnknownInstrucion, StackOverflow {
+    public void cycle(Memory memory) throws UnknownInstrucion{
         this.fetch(memory);
         this.decode(memory);
         this.execute(memory);
@@ -144,9 +121,5 @@ public class CPU {
             }
         }
         throw new UnknownInstrucion("The instruction with the opcode " + (int) opcode + " is not in the CPU instruction set!!");
-    }
-
-    public boolean getHaltState(){
-        return this.halt_state;
     }
 }

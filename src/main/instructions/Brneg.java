@@ -31,5 +31,8 @@ public class Brneg extends Instruction implements OneOperandInstruction{
     public void setOperand1(char operand1) {
         this.operand1 = operand1;
     }
-
+    
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
+    }
 }

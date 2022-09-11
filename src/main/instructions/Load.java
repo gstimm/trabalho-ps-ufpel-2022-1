@@ -32,4 +32,8 @@ public class Load extends Instruction implements OneOperandInstruction{
     public void setOperand1(char value){
         this.operand1 = value;
     }
+
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
+    }
 }

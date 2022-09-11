@@ -1,6 +1,8 @@
 package main.instructions;
 
 import java.util.HashSet;
+import java.util.Scanner;
+
 import main.Memory;
 import main.OneOperandInstruction;
 import main.Registers;
@@ -18,11 +20,11 @@ public class Read extends Instruction implements OneOperandInstruction {
         this.setAddressingModesSuported(modes);
     }
 
-    
     public void doOperation(Registers registers, Memory memory) {
-        
-        // int value = registers.getRegister(0);
-        // memory.setMemory(value, operand1);
+        Scanner scanner = new Scanner(System.in);
+        short value = scanner.nextShort();
+        memory.setMemoryPosition(operand1, (char) value);
+        scanner.close();
     }
 
     public char getOperand1(){
@@ -32,4 +34,8 @@ public class Read extends Instruction implements OneOperandInstruction {
     public void setOperand1(char value){
         this.operand1 = value;
     }  
+    
+    public AddressingMode getOperand1AddressingMode(char opcode) {
+        return AddressingMode.addressingModeByOpcode(opcode);
+    }
 }

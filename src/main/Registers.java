@@ -1,5 +1,4 @@
 package main;
-import main.errors.StackOverflow;
 
 public class Registers {
     private char PC;
@@ -8,19 +7,14 @@ public class Registers {
     private byte MOP;
     private char RI;
     private char RE;
-    private char stackSize;
-    private char stackStart;
     
-    
-    public Registers(char stackSize, char stackStart) {
+    public Registers() {
         this.PC = 0;
         this.SP = 0;
         this.ACC = 0;
         this.MOP = 0;
         this.RI = 0;
         this.RE = 0;
-        this.stackSize = stackSize;
-        this.stackStart = stackStart; 
     }
 
     public char getPC() {
@@ -32,13 +26,7 @@ public class Registers {
     public char getSP() {
         return this.SP;
     }
-    public void setSP(char sP) throws StackOverflow{
-        if(sP > this.stackSize){
-            throw new StackOverflow("Stack Overflowed, the value " + (int) sP + " is bigger than the maximum size of the stack: " + (int) this.stackSize);
-        }
-        else if (sP < stackStart){
-            throw new StackOverflow("Stack Underflowed, the value " + (int) sP + " is lower than the minimun index of the stack: " + (int) this.stackStart);
-        }   
+    public void setSP(char sP){
         this.SP = sP;
     }
     public char getACC() {
@@ -78,8 +66,8 @@ public class Registers {
     public void incrementACC(char value){
         this.ACC += value;
     }   
-    public void incrementSP(char value) throws StackOverflow {
-        this.setSP((char) (this.getSP() + 1));
+    public void incrementSP(char value){
+        this.setSP((char) (this.getSP() + value));
     }
   
     public void incrementPC(char value){
