@@ -6,8 +6,8 @@ import main.instructions.*;
 import main.errors.*;
 
 public class CPU {
-    private ArrayList<Instruction> instructions;
-    private Registers registers;
+    private final ArrayList<Instruction> instructions;
+    private final Registers registers;
     private int index_current_instruction;
 
     public CPU() {
@@ -64,11 +64,12 @@ public class CPU {
         }
     }
     
-    private void decode(Memory memory){
+    private void decode(Memory memory) throws UndefinedAddressingMode {
         Instruction instruction = instructions.get(index_current_instruction);
         
         if (instruction instanceof OneOperandInstruction){
-            switch (((OneOperandInstruction) instruction).getOperand1AddressingMode(registers.getRI())){
+            ((OneOperandInstruction) instruction).setCurrentOperand1AddressingMode(registers.getRI());
+            switch (((OneOperandInstruction) instruction).getOperand1AddressingMode()){
                 case DIRECT:
                     ((OneOperandInstruction) instruction).setOperand1(memory.getMemoryPosition(
                         ((OneOperandInstruction) instruction).getOperand1()
@@ -85,7 +86,8 @@ public class CPU {
             }
         }
         if (instructions.get(index_current_instruction) instanceof TwoOperandInstruction){
-            switch (((TwoOperandInstruction) instruction).getOperand2AddressingMode(registers.getRI())){
+            ((TwoOperandInstruction) instruction).setCurrentOperand2AddressingMode(registers.getRI());
+            switch (((TwoOperandInstruction) instruction).getOperand2AddressingMode()){
                 case DIRECT:
                     ((TwoOperandInstruction) instruction).setOperand2(memory.getMemoryPosition(
                         ((TwoOperandInstruction) instruction).getOperand2()
@@ -104,10 +106,18 @@ public class CPU {
     
     private void execute(Memory memory){
         System.out.println(instructions.get(index_current_instruction).toString());
+        if (instructions.get(index_current_instruction) instanceof OneOperandInstruction){
+            System.out.println("Operand1 mode: "+((OneOperandInstruction)instructions.get(index_current_instruction)).getOperand1AddressingMode().toString());
+        }
+        if (instructions.get(index_current_instruction) instanceof TwoOperandInstruction){
+            System.out.println("Operand2 mode: "+((TwoOperandInstruction)instructions.get(index_current_instruction)).getOperand2AddressingMode().toString());
+        }
+        System.out.println();
+        
         instructions.get(index_current_instruction).doOperation(registers, memory);
     }
 
-    public void cycle(Memory memory) throws UnknownInstrucion{
+    public void cycle(Memory memory) throws UnknownInstrucion, UndefinedAddressingMode{
         this.fetch(memory);
         this.decode(memory);
         this.execute(memory);

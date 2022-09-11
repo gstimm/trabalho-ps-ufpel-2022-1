@@ -4,7 +4,7 @@ import main.errors.UndefinedAddressingMode;
 
 public enum AddressingMode {
     DIRECT("DIRECT"), INDIRECT("INDIRECT"), IMMEDIATE("IMMEDIATE");
-    private String mode;
+    private final String mode;
 
     AddressingMode(String mode){
         this.mode = mode;

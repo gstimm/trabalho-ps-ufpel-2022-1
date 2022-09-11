@@ -2,7 +2,7 @@ package main;
 
 public class Memory {
     private int memorySize = 2048;
-    private char[] memory;
+    private final char[] memory;
 
     Memory(int numberWords) {
         memorySize = numberWords;

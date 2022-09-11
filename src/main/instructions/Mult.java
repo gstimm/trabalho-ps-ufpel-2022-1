@@ -6,32 +6,42 @@ import main.OneOperandInstruction;
 import main.AddressingMode;
 import main.Instruction;
 import main.Registers;
+import main.errors.UndefinedAddressingMode;
 
 public class Mult extends Instruction implements OneOperandInstruction{
-    private char operand1; 
+    private char operand1;
+    private AddressingMode currentOperand1AddressingMode;
 
     public Mult(){
-        super("MULT", 14, 2, 1);
-        HashSet<AddressingMode> modes = new HashSet<AddressingMode>();
-        modes.add(AddressingMode.DIRECT);
-        modes.add(AddressingMode.INDIRECT);
-        modes.add(AddressingMode.IMMEDIATE);
-        this.setAddressingModesSuported(modes);
+        super("MULT", 14, 2, 1, new HashSet<AddressingMode>());
+        this.getAddressingModesSuported().add(AddressingMode.DIRECT);
+        this.getAddressingModesSuported().add(AddressingMode.INDIRECT);
+        this.getAddressingModesSuported().add(AddressingMode.IMMEDIATE);
+        this.operand1 = 0;
+        this.currentOperand1AddressingMode = null;
     }
     
     public void doOperation(Registers registers, Memory memory) {
         registers.setACC((char)(registers.getACC() * memory.getMemoryPosition(operand1)));
     }
 
-     public char getOperand1(){
+    public char getOperand1(){
         return this.operand1;
     }
     
-    public void setOperand1(char value){
+    public void setOperand1(char value) {
         this.operand1 = value;
-    }  
-    
-    public AddressingMode getOperand1AddressingMode(char opcode) {
-        return AddressingMode.addressingModeByOpcode(opcode);
+    }
+
+    public AddressingMode getOperand1AddressingMode(){
+        return this.currentOperand1AddressingMode;
+    }
+
+    public void setCurrentOperand1AddressingMode(char opcode) throws UndefinedAddressingMode {
+        AddressingMode mode = AddressingMode.addressingModeByOpcode(opcode);
+        if (super.getAddressingModesSuported().contains(mode) == false){
+            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString() + " in not valid for the instruction " + this.getMnemonic());
+        }
+        this.currentOperand1AddressingMode = mode;
     }
 }

@@ -5,14 +5,15 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import main.errors.StackOverflow;
+import main.errors.UndefinedAddressingMode;
 import main.errors.UnknownInstrucion;
 
 public class VirtualMachine {
     private final int defultMemorySize = 2048;
     private final char defaultStackSize = 100;
     private final char defaultStackStartIndex = 2;
-    private Memory memory;
-    private CPU cpu;
+    private final Memory memory;
+    private final CPU cpu;
 
     VirtualMachine(CPU cpu, Memory memory){
         this.memory = memory;
@@ -32,7 +33,7 @@ public class VirtualMachine {
     public CPU getCPU(){
         return cpu;
     }
-    public void cycle() throws UnknownInstrucion, StackOverflow {
+    public void cycle() throws UnknownInstrucion, StackOverflow, UndefinedAddressingMode {
         cpu.cycle(memory);
         
         if(cpu.getRegisters().getSP() > defaultStackSize){
@@ -44,7 +45,7 @@ public class VirtualMachine {
     }
     public void initMachine(){
         memory.setMemoryPosition(defaultStackStartIndex, defaultStackSize);
-        cpu.getRegisters().setSP((char) (defaultStackStartIndex + 1));
+        cpu.getRegisters().setSP((char) (defaultStackStartIndex));
         cpu.getRegisters().setPC((char) (defaultStackStartIndex + defaultStackSize - 1));
     }
     public void readFile(String fileName) throws IndexOutOfBoundsException, FileNotFoundException{

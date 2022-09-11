@@ -3,18 +3,18 @@ package main;
 import java.util.HashSet;
 
 public abstract class Instruction {
-    private String mnemonic;
-    private int opcode;
-    private int instructionSize;
-    private int numberOfOperands;
-    private HashSet<AddressingMode> addressingModesSuported;
+    private final String mnemonic;
+    private final int opcode;
+    private final int instructionSize;
+    private final int numberOfOperands;
+    private final HashSet<AddressingMode> addressingModesSuported;
 
-    public Instruction(String mnemonic, int opcode, int instructionSize, int numberOfOperands){
+    public Instruction(String mnemonic, int opcode, int instructionSize, int numberOfOperands, HashSet<AddressingMode> addressingModesSuported){
         this.mnemonic = mnemonic;
         this.opcode = opcode;
         this.instructionSize = instructionSize;
         this.numberOfOperands = numberOfOperands;
-        addressingModesSuported = null;
+        this.addressingModesSuported = addressingModesSuported;
     }
     
     public abstract void doOperation(Registers registers, Memory memory);
@@ -45,9 +45,4 @@ public abstract class Instruction {
     public HashSet<AddressingMode> getAddressingModesSuported() {
         return addressingModesSuported;
     }
-
-    public void setAddressingModesSuported(HashSet<AddressingMode> addressingModesSuported) {
-        this.addressingModesSuported = addressingModesSuported;
-    }
-    
 }
