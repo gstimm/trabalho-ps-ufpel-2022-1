@@ -1,21 +1,24 @@
 package main.instructions;
 
-import java.util.HashSet;
-import main.AddressingMode;
 import main.Instruction;
 import main.Memory;
 import main.OneOperandInstruction;
 import main.Registers;
 import main.errors.UndefinedAddressingMode;
+import main.AddressingMode;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Brpos extends Instruction implements OneOperandInstruction {
-    char operand1;
+    private final Set<AddressingMode> operand1AddressingModes;
+    private short operand1;
     private AddressingMode currentOperand1AddressingMode;
 
     public Brpos(){
-        super("BRPOS", 1, 2, 1, new HashSet<AddressingMode>());
-        this.getAddressingModesSuported().add(AddressingMode.DIRECT);    
-        this.getAddressingModesSuported().add(AddressingMode.INDIRECT);
+        super("BRPOS", 1, 2, 1);
+        this.operand1AddressingModes = new HashSet<AddressingMode>();
+        this.operand1AddressingModes.add(AddressingMode.DIRECT);    
+        this.operand1AddressingModes.add(AddressingMode.INDIRECT);
         this.operand1 = 0;
         this.currentOperand1AddressingMode = null;
     }
@@ -26,23 +29,34 @@ public class Brpos extends Instruction implements OneOperandInstruction {
         }
     }
 
-    public char getOperand1(){
+    public short getOperand1(){
         return this.operand1;
     }
     
-    public void setOperand1(char value) {
+    public void setOperand1(short value){
         this.operand1 = value;
     }
 
-    public AddressingMode getOperand1AddressingMode(){
+    public Set<AddressingMode> getOperand1AddressingModes(){
+        return this.operand1AddressingModes;
+    }
+
+    public AddressingMode getCurrentOperand1AddressingMode(){
         return this.currentOperand1AddressingMode;
     }
 
-    public void setCurrentOperand1AddressingMode(char opcode) throws UndefinedAddressingMode {
+    public void setCurrentOperand1AddressingMode(short opcode) throws UndefinedAddressingMode {
         AddressingMode mode = AddressingMode.addressingModeByOpcode(opcode);
-        if (super.getAddressingModesSuported().contains(mode) == false){
+        if (this.operand1AddressingModes.contains(mode) == false){
             throw new UndefinedAddressingMode("The Addressing mode " + mode.toString() + " in not valid for the instruction " + this.getMnemonic());
         }
         this.currentOperand1AddressingMode = mode;
+    }
+    @Override
+    public String toString(){
+        return super.toString() +
+                "OPERAND1: \t" + this.operand1 +
+                "\nADDR MODE: \t" + this.currentOperand1AddressingMode.toString() + 
+                "\n";
     }
 }

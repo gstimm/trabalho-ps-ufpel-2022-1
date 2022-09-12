@@ -1,12 +1,12 @@
 package main;
 
 public class Registers {
-    private char PC;
-    private char SP;
-    private char ACC;
+    private short PC;
+    private short SP;
+    private short ACC;
     private byte MOP;
-    private char RI;
-    private char RE;
+    private short RI;
+    private short RE;
     
     public Registers() {
         this.PC = 0;
@@ -17,22 +17,22 @@ public class Registers {
         this.RE = 0;
     }
 
-    public char getPC() {
+    public short getPC() {
         return this.PC;
     }
-    public void setPC(char pC) {
+    public void setPC(short pC) {
         this.PC = pC;
     }
-    public char getSP() {
+    public short getSP() {
         return this.SP;
     }
-    public void setSP(char sP){
+    public void setSP(short sP){
         this.SP = sP;
     }
-    public char getACC() {
+    public short getACC() {
         return this.ACC;
     }
-    public void setACC(char aCC) {
+    public void setACC(short aCC) {
         this.ACC = aCC;
     }
     public byte getMOP() {
@@ -41,36 +41,36 @@ public class Registers {
     public void setMOP(byte mOP) {
         this.MOP = mOP;
     }
-    public char getRI() {
+    public short getRI() {
         return this.RI;
     }
-    public void setRI(char rI) {
+    public void setRI(short rI) {
         this.RI = rI;
     }
-    public char getRE() {
+    public short getRE() {
         return this.RE;
     }
-    public void setRE(char rE) {
+    public void setRE(short rE) {
         this.RE = rE;
     }
     @Override
     public String toString(){
-        String result = "PC  = " + (int) this.PC + "\n" +
-                        "SP  = " + (int) this.SP + "\n" +
-                        "ACC = " + (int) this.ACC + "\n" +
-                        "MOP = " + (int) this.MOP + "\n" +
-                        "RI  = " + (int) this.RI + "\n" +
-                        "RE  = " + (int) this.RE + "\n";
+        String result = "PC  = " + (short) this.PC + "\n" +
+                        "SP  = " + (short) this.SP + "\n" +
+                        "ACC = " + (short) this.ACC + "\n" +
+                        "MOP = " + (short) this.MOP + "\n" +
+                        "RI  = " + (short) this.RI + "\n" +
+                        "RE  = " + (short) this.RE + "\n";
         return result;
     }
-    public void incrementACC(char value){
+    public void incrementACC(short value){
         this.ACC += value;
     }   
-    public void incrementSP(char value){
-        this.setSP((char) (this.getSP() + value));
+    public void incrementSP(short value){
+        this.setSP((short) (this.getSP() + value));
     }
   
-    public void incrementPC(char value){
+    public void incrementPC(short value){
         this.PC += value;
     }
 

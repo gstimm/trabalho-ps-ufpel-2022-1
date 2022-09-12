@@ -48,10 +48,7 @@ public class CPU {
         registers.setRI(memory.getMemoryPosition(registers.getPC()));
         registers.incrementPC();
         
-        if (registers.getRI() >> 7 != 0){
-            throw new UnknownInstrucion("The instruction with the opcode " + (int) registers.getRI() + " is not in the CPU instruction set!!");
-        }
-        char opcode = (char)(registers.getRI() & 0b1111);
+        short opcode = (short)(registers.getRI() & 0b1111111100011111);
         identifyInstructionByOpcode(opcode);
          
         if (instructions.get(index_current_instruction) instanceof OneOperandInstruction){
@@ -69,7 +66,7 @@ public class CPU {
         
         if (instruction instanceof OneOperandInstruction){
             ((OneOperandInstruction) instruction).setCurrentOperand1AddressingMode(registers.getRI());
-            switch (((OneOperandInstruction) instruction).getOperand1AddressingMode()){
+            switch (((OneOperandInstruction) instruction).getCurrentOperand1AddressingMode()){
                 case DIRECT:
                     ((OneOperandInstruction) instruction).setOperand1(memory.getMemoryPosition(
                         ((OneOperandInstruction) instruction).getOperand1()
@@ -87,7 +84,7 @@ public class CPU {
         }
         if (instructions.get(index_current_instruction) instanceof TwoOperandInstruction){
             ((TwoOperandInstruction) instruction).setCurrentOperand2AddressingMode(registers.getRI());
-            switch (((TwoOperandInstruction) instruction).getOperand2AddressingMode()){
+            switch (((TwoOperandInstruction) instruction).getCurrentOperand2AddressingMode()){
                 case DIRECT:
                     ((TwoOperandInstruction) instruction).setOperand2(memory.getMemoryPosition(
                         ((TwoOperandInstruction) instruction).getOperand2()
@@ -103,17 +100,10 @@ public class CPU {
             }
         }
     }
-    
+
     private void execute(Memory memory){
         System.out.println(instructions.get(index_current_instruction).toString());
-        if (instructions.get(index_current_instruction) instanceof OneOperandInstruction){
-            System.out.println("Operand1 mode: "+((OneOperandInstruction)instructions.get(index_current_instruction)).getOperand1AddressingMode().toString());
-        }
-        if (instructions.get(index_current_instruction) instanceof TwoOperandInstruction){
-            System.out.println("Operand2 mode: "+((TwoOperandInstruction)instructions.get(index_current_instruction)).getOperand2AddressingMode().toString());
-        }
         System.out.println();
-        
         instructions.get(index_current_instruction).doOperation(registers, memory);
     }
 
@@ -123,13 +113,13 @@ public class CPU {
         this.execute(memory);
     }
 
-    private void identifyInstructionByOpcode(char opcode) throws UnknownInstrucion {
+    private void identifyInstructionByOpcode(short opcode) throws UnknownInstrucion {
         for (int c = 0; c < instructions.size(); c++){
             if (instructions.get(c).getOpcode() == opcode){
                 this.index_current_instruction = c;
                 return;
             }
         }
-        throw new UnknownInstrucion("The instruction with the opcode " + (int) opcode + " is not in the CPU instruction set!!");
+        throw new UnknownInstrucion("The instruction with the opcode " + opcode + " is not in the CPU instruction set!!");
     }
 }
