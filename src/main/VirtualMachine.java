@@ -9,9 +9,9 @@ import main.errors.UndefinedAddressingMode;
 import main.errors.UnknownInstrucion;
 
 public class VirtualMachine {
-    private final int defaultMemorySize = 2048;
-    private final short defaultStackSize = 100;
-    private final short defaultStackStartIndex = 2;
+    public final int defaultMemorySize = 2048;
+    public final short defaultStackSize = 100;
+    public final short defaultStackStartIndex = 2;
     private final Memory memory;
     private final CPU cpu;
 
@@ -46,7 +46,7 @@ public class VirtualMachine {
     public void initMachine(){
         memory.setMemoryPosition(defaultStackStartIndex, defaultStackSize);
         cpu.getRegisters().setSP(defaultStackStartIndex);
-        cpu.getRegisters().setPC((short) (defaultStackStartIndex + defaultStackSize -1));
+        cpu.getRegisters().setPC((short) (defaultStackStartIndex + defaultStackSize));
     }
     public void readFile(String fileName) throws IndexOutOfBoundsException, FileNotFoundException{
         File file = new File(fileName);
@@ -66,6 +66,6 @@ public class VirtualMachine {
         scanner.close();
     }
     public void printStack(){
-        memory.printMemoryInRange(defaultStackStartIndex + 1, defaultStackSize);
+        memory.printMemoryInRange(defaultStackStartIndex + 1, defaultStackSize + defaultStackStartIndex + 1);
     }
 }

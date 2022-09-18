@@ -8,7 +8,7 @@ import main.errors.*;
 public class CPU {
     private final ArrayList<Instruction> instructions;
     private final Registers registers;
-    private int index_current_instruction;
+    private int index_current_instruction = -1;
 
     public CPU() {
         registers = new Registers();
@@ -121,5 +121,9 @@ public class CPU {
             }
         }
         throw new UnknownInstrucion("The instruction with the opcode " + opcode + " is not in the CPU instruction set!!");
+    }
+
+    public int getCurrentInstructionIndex(){
+        return index_current_instruction;
     }
 }

@@ -5,6 +5,7 @@ import main.Memory;
 import main.OneOperandInstruction;
 import main.Registers;
 import main.errors.UndefinedAddressingMode;
+import main.gui.PromptInput;
 import main.AddressingMode;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -25,6 +26,12 @@ public class Read extends Instruction implements OneOperandInstruction {
     }
 
     public void doOperation(Registers registers, Memory memory) {
+        // Criar popup e pedir a entrada
+        
+        // PromptInput janela_Input = new PromptInput();
+        // janela_Input.showWindow("");
+        // memory.setMemoryPosition(operand1, janela_Input.getShort());
+        
         Scanner scanner = new Scanner(System.in);
         short value = scanner.nextShort();
         memory.setMemoryPosition(operand1, (short) value);

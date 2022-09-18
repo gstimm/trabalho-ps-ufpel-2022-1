@@ -1,19 +1,22 @@
 package main;
 
+import java.util.ArrayList;
+
 public class Memory {
     private final int memorySize;
-    private final short[] memory;
+    private final ArrayList<Short> memory;
 
     Memory(int numberWords) {
         memorySize = numberWords;
-        memory = new short[memorySize];
+        memory = new ArrayList<Short>(memorySize);
+        clearMemory();
     }
 
     public short getMemoryPosition(int address) throws IndexOutOfBoundsException {
         if(address < 0 || address >= memorySize){
             throw new IndexOutOfBoundsException("Address out of bounds");
         } else {
-            return memory[address];
+            return memory.get(address);
         }
     }
 
@@ -21,7 +24,7 @@ public class Memory {
         if(address < 0 || address >= memorySize){
             throw new IndexOutOfBoundsException("Address out of bounds");
         } else {
-            memory[address] = value;
+            memory.set(address, value);
         }
     }
 
@@ -30,14 +33,19 @@ public class Memory {
     }
 
     public void clearMemory() {
-        for(int i = 0; i < memorySize; i++) {
-            memory[i] = 0;
+        if (memory.size() < memorySize){
+            for (int c = memory.size(); c < memorySize - memory.size(); c++){
+                memory.add(c, (short) 0);
+            }
+        }
+        else {
+            memory.clear();
         }
     }
 
     public void printMemory() {
         for(int i = 0; i < memorySize; i++) {
-            System.out.println("Memory[" + i + "] = " + memory[i]);
+            System.out.println("Memory[" + i + "] = " + memory.get(i));
         }
     }
     public void printMemoryInRange(int startIndex, int finishIndex) throws IndexOutOfBoundsException{
@@ -47,8 +55,11 @@ public class Memory {
         int start = startIndex < finishIndex ? startIndex : finishIndex;
         int end = startIndex > finishIndex ? startIndex : finishIndex;
         for(int i = start; i < end; i++) {
-            System.out.println("Memory[" + i + "] = " + memory[i]);
+            System.out.println("Memory[" + i + "] = " + memory.get(i));
         }
+    }
+    public ArrayList<Short> getMemory(){
+        return this.memory;
     }
     
 }
