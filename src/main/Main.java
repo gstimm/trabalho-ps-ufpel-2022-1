@@ -24,7 +24,7 @@ public class Main extends Application {
     private static Registers registers = cpu.getRegisters();
     private static Memory memory = maquina_virtual.getMemory();
     private Instruction stop_instruction = new Stop();
-    private Thread thread1;
+    private Thread thread1 = new Thread();
     private int memoryMaximumDisplay = 1000;
 
     // User interaction Area
@@ -117,6 +117,7 @@ public class Main extends Application {
         for (int c = 0; c < memoryMaximumDisplay; c++){
             memory_table.getItems().add(new MemoryCell(c, (short)memory.getMemoryPosition(c)));
         }
+        memory_table.scrollTo(maquina_virtual.defaultStackSize + maquina_virtual.defaultStackStartIndex);
 
         index_stack.setCellValueFactory(new PropertyValueFactory<MemoryCell, Integer>("address"));
         value_stack.setCellValueFactory(new PropertyValueFactory<MemoryCell, Short>("value"));
@@ -129,14 +130,15 @@ public class Main extends Application {
     }
     @Override
     public void stop() throws Exception{
-        if (thread1 != null) thread1.interrupt();
         super.stop();
+        exitApplication();
     }
     public void setupUI(){
         updateRegisters();
         updateStack();
         updateMemory();
         updateCurrentInstruction();
+        changeMode();
     }
 
     /* Controller methods */
@@ -175,6 +177,7 @@ public class Main extends Application {
         }
     }
     public void exitApplication(){
+        Platform.exit();
         System.exit(0);
     }
 
@@ -190,8 +193,6 @@ public class Main extends Application {
         output_area.setText("");
     }
     public void executeInstruction(){
-        if (thread1.isAlive()) thread1.interrupt();
-
         thread1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -231,18 +232,21 @@ public class Main extends Application {
             }
        });
        thread1.start();
-        
     }
     public void updateStack(){
+        // stack_table.scrollTo(registers.getSP() - maquina_virtual.defaultStackStartIndex);
+        stack_table.getSelectionModel().clearAndSelect(registers.getSP() - maquina_virtual.defaultStackStartIndex);
         ObservableList<MemoryCell> tableMemory = stack_table.getItems();
         
         for (int c = 0 ; c < tableMemory.size(); c++){
-            tableMemory.get(c).setValue(memory.getMemoryPosition(c));
+            tableMemory.get(c).setValue(memory.getMemoryPosition(c + maquina_virtual.defaultStackStartIndex));
         }
         stack_table.setItems(tableMemory);
         stack_table.refresh();
     }
     public void updateMemory() {
+        // memory_table.scrollTo(registers.getPC());
+        memory_table.getSelectionModel().clearAndSelect(registers.getPC());
         ObservableList<MemoryCell> tableMemory = memory_table.getItems();
         
         for (int c = 0 ; c < tableMemory.size(); c++){
@@ -250,6 +254,13 @@ public class Main extends Application {
         } 
         memory_table.setItems(tableMemory);
         memory_table.refresh();
+    }
+    public void updateMainMemory() {
+        ObservableList<MemoryCell> tableMemory = memory_table.getItems();
+        
+        for (int c = 0 ; c < tableMemory.size(); c++){
+            memory.setMemoryPosition(tableMemory.get(c).getAddress(), tableMemory.get(c).getValue());
+        }
     }
     public void updateCurrentInstruction(){
         int index_instruction = cpu.getCurrentInstructionIndex();
@@ -296,9 +307,11 @@ public class Main extends Application {
 
     public void updatePC(){
         registers.setPC(Short.parseShort(PC_value.getText()));
+        updateMemory();
     }
     public void updateSP(){
         registers.setSP(Short.parseShort(SP_value.getText()));
+        updateStack();
     }
     public void updateACC(){
         registers.setACC(Short.parseShort(ACC_value.getText()));
@@ -309,26 +322,4 @@ public class Main extends Application {
     public void updateRE(){
         registers.setRE(Short.parseShort(RE_value.getText()));
     }
-        /*
-        
-        try {
-            maquina_virtual.initMachine();
-            Stop stop_instruction = new Stop();
-
-            maquina_virtual.readFile(System.getProperty("user.dir") + "/src/main/file.txt");
-            
-            maquina_virtual.getMemory().printMemoryInRange(101, 120);
-            System.out.println(maquina_virtual.getCPU().getRegisters().toString());
-            
-
-            while (maquina_virtual.getCPU().getRegisters().getRI() != stop_instruction.getOpcode()) {
-                maquina_virtual.cycle();
-                maquina_virtual.getMemory().printMemoryInRange(101, 120);
-                System.out.println(maquina_virtual.getCPU().getRegisters().toString());
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        */
 }

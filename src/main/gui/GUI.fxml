@@ -154,7 +154,7 @@
                         <TableView fx:id="memory_table" editable="true" layoutX="14.0" layoutY="61.0" prefHeight="460.0" prefWidth="193.0">
                           <columns>
                             <TableColumn fx:id="index_memory" editable="false" prefWidth="81.0" sortable="false" text="Index" />
-                            <TableColumn fx:id="value_memory" prefWidth="111.0" sortable="false" text="Value" />
+                            <TableColumn fx:id="value_memory" onEditCommit="#updateMainMemory" prefWidth="111.0" sortable="false" text="Value" />
                           </columns>
                            <opaqueInsets>
                               <Insets />
@@ -163,7 +163,7 @@
                         <TableView fx:id="stack_table" editable="true" layoutX="215.0" layoutY="61.0" prefHeight="461.0" prefWidth="200.0">
                           <columns>
                             <TableColumn fx:id="index_stack" editable="false" prefWidth="82.0" sortable="false" text="Index" />
-                            <TableColumn fx:id="value_stack" prefWidth="117.0" sortable="false" text="Value" />
+                            <TableColumn fx:id="value_stack" onEditCommit="#updateMainMemory" prefWidth="117.0" sortable="false" text="Value" />
                           </columns>
                            <opaqueInsets>
                               <Insets />
