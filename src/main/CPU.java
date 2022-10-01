@@ -48,7 +48,7 @@ public class CPU {
         registers.setRI(memory.getMemoryPosition(registers.getPC()));
         registers.incrementPC();
         
-        short opcode = (short)(registers.getRI() & 0b1111111100011111);
+        short opcode = (short)(registers.getRI() & 0b1111_1111_0001_1111);
         identifyInstructionByOpcode(opcode);
          
         if (instructions.get(index_current_instruction) instanceof OneOperandInstruction){
@@ -103,8 +103,10 @@ public class CPU {
 
     private void execute(Memory memory){
         System.out.println(instructions.get(index_current_instruction).toString());
-        System.out.println();
-        instructions.get(index_current_instruction).doOperation(registers, memory);
+        Instruction instruction = instructions.get(index_current_instruction);
+        if (instruction instanceof ExecuteOperation){
+            ((ExecuteOperation) instruction).doOperation(registers, memory);
+        }
     }
 
     public void cycle(Memory memory) throws UnknownInstrucion, UndefinedAddressingMode{

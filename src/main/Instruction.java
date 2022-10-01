@@ -1,40 +1,22 @@
 package main;
+import assembler.PseudoInstruction;
 
-public abstract class Instruction {
-    private final String mnemonic;
+public abstract class Instruction extends PseudoInstruction {
     private final int opcode;
-    private final int instructionSize;
-    private final int numberOfOperands;
 
     public Instruction(String mnemonic, int opcode, int instructionSize, int numberOfOperands){
-        this.mnemonic = mnemonic;
+        super(mnemonic, instructionSize, numberOfOperands);
         this.opcode = opcode;
-        this.instructionSize = instructionSize;
-        this.numberOfOperands = numberOfOperands;
     }
     
-    public abstract void doOperation(Registers registers, Memory memory);
-
     public String toString(){
-        return "MNEMONIC:\t" + mnemonic + 
-               "\nOPCODE:\t\t" + opcode + 
-               "\nSIZE:\t\t" + instructionSize + 
-               "\nOPERANDS:\t" + numberOfOperands + "\n";
-    }
-
-    public String getMnemonic() {
-        return mnemonic;
+        return "\nOPCODE:\t\t" + opcode + 
+                "\n" + super.toString();
     }
 
     public int getOpcode() {
         return opcode;
     }
 
-    public int getInstructionSize() {
-        return instructionSize;
-    }
-
-    public int getNumberOfOperands() {
-        return numberOfOperands;
-    }
+    public abstract String toBinary();
 }

@@ -1,14 +1,17 @@
 package main.instructions;
 
+import main.AddressingMode;
 import main.Instruction;
-import main.Memory;
-import main.Registers;
 
 public class Stop extends Instruction {
-    public Stop(){
+    public Stop() {
         super("STOP", 11, 1, 0);
-	}
+    }
 
     @Override
-    public void doOperation(Registers registers, Memory memory) {}
+    public String toBinary(){
+        int result_opcode = AddressingMode.opcodeByAddressingMode(this.getOpcode(), null, null);
+        String result = result_opcode + "";
+        return result;
+    }
 }

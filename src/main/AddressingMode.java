@@ -25,12 +25,38 @@ public enum AddressingMode {
         throw new UndefinedAddressingMode("The string does not correspond to any Addressing Mode");
     }
     public static AddressingMode addressingModeByOpcode(short opcode){
-        if ((opcode & 0b1100000) != 0){
+        if ((opcode & 0b0110_0000) != 0){
             return INDIRECT;
         }
-        if ((opcode & 0b10000000) != 0){
+        if ((opcode & 0b1000_0000) != 0){
             return IMMEDIATE;
         }
         return DIRECT;
+    }
+    public static int opcodeByAddressingMode(int opcode, AddressingMode operand1, AddressingMode operand2) {
+        if (operand1 != null) {
+            switch (operand1) {
+                case INDIRECT:
+                    opcode = opcode | 0b0100_0000;
+                    break;
+                case IMMEDIATE:
+                    opcode = opcode | 0b1000_0000;
+                default:
+                    break;
+            }
+        }
+
+        if (operand2 != null) {
+            switch (operand1) {
+                case INDIRECT:
+                    opcode = opcode | 0b0010_0000;
+                    break;
+                case IMMEDIATE:
+                    opcode = opcode | 0b1000_0000;
+                default:
+                    break;
+            }
+        }
+        return opcode;
     }
 }
