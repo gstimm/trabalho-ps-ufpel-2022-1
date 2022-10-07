@@ -9,7 +9,7 @@ public class Stop extends Instruction {
     }
 
     @Override
-    public String toBinary(){
+    public String toDecimalString(){
         int result_opcode = AddressingMode.opcodeByAddressingMode(this.getOpcode(), null, null);
         String result = result_opcode + "";
         return result;

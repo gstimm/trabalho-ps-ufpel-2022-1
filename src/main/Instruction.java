@@ -18,5 +18,5 @@ public abstract class Instruction extends PseudoInstruction {
         return opcode;
     }
 
-    public abstract String toBinary();
+    public abstract String toDecimalString();
 }

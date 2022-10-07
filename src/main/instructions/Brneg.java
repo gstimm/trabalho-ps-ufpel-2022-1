@@ -65,7 +65,7 @@ public class Brneg extends Instruction implements OneOperandInstruction, Execute
     }
 
     @Override
-    public String toBinary(){
+    public String toDecimalString(){
         int result_opcode = AddressingMode.opcodeByAddressingMode(this.getOpcode(), this.currentOperand1AddressingMode, null);
         String result = result_opcode + "\t" + operand1;
         return result;

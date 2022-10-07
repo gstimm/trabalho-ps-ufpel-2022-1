@@ -1,4 +1,4 @@
-package assembler.pseudo_instruction;
+package assembler.pseudo_instructions;
 
 import assembler.PseudoInstruction;
 

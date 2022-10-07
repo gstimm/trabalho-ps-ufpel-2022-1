@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "assembler.Main",
+            "projectName": "trabalho-ps-ufpel-2022-1_9ac79377"
+        },
+        {
+            "type": "java",
+            "name": "Launch Assembler",
+            "request": "launch",
+            "mainClass": "assembler.Assembler",
+            "projectName": "trabalho-ps-ufpel-2022-1_9ac79377"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"
@@ -16,7 +30,7 @@
             "request": "launch",
             "mainClass": "main.Main",
             "projectName": "trabalho-ps-ufpel-2022-1_9ac79377",
-            "vmArgs": "--module-path \"C:\\Program Files\\JavaFX\\javafx-sdk-19\\lib\" --add-modules javafx.controls,javafx.fxml",
+            "vmArgs": "--module-path \"C:\\Program Files\\JavaFX\\javafx-sdk-19\\lib\" --add-modules javafx.controls,javafx.fxml"
         }
     ]
 }

@@ -99,7 +99,7 @@ public class Copy extends Instruction implements TwoOperandInstruction, ExecuteO
     }
 
     @Override
-    public String toBinary(){
+    public String toDecimalString(){
         int result_opcode = AddressingMode.opcodeByAddressingMode(this.getOpcode(), this.currentOperand1AddressingMode, this.currentOperand2AddressingMode);
         String result = result_opcode + "\t" + operand1 + "\t" + operand2;
         return result;

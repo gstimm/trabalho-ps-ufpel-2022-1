@@ -1,4 +1,4 @@
-package assembler.pseudo_instruction;
+package assembler.pseudo_instructions;
 
 import java.util.Set;
 
@@ -7,11 +7,11 @@ import main.AddressingMode;
 import main.OneOperandInstruction;
 import main.errors.UndefinedAddressingMode;
 
-public class Const extends PseudoInstruction implements OneOperandInstruction {
+public class Start extends PseudoInstruction implements OneOperandInstruction {
     private short operand1;
 
-    public Const() {
-        super("CONST", 1, 1);
+    public Start() {
+        super("START", 0, 1);
     }
 
     @Override

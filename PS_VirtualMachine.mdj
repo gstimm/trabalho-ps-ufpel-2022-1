@@ -1354,7 +1354,7 @@
 											"top": 477,
 											"width": 301.32958984375,
 											"height": 13,
-											"text": "+toBinary()",
+											"text": "+toDecimalString()",
 											"horizontalAlignment": 0
 										}
 									],
@@ -24662,7 +24662,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGC/iHime7T5Tc="
 							},
-							"name": "toBinary"
+							"name": "toDecimalString"
 						}
 					],
 					"isAbstract": true
