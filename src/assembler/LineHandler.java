@@ -19,6 +19,7 @@ public class LineHandler {
     public void readLine(Scanner scanner) throws LineTooLong, FailToReadTokens {
         if (scanner.hasNextLine()){
             this.resetVaules();
+            this.isComentary = false;
 
             String line = scanner.nextLine();
             if (line.length() > Assembler.MAX_LINE_SIZE){
