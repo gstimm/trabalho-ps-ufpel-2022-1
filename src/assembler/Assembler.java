@@ -25,7 +25,6 @@ import main.Instruction;
 import main.OneOperandInstruction;
 import main.TwoOperandInstruction;
 import main.errors.UndefinedAddressingMode;
-import main.errors.UnknownInstrucion;
 
 public class Assembler {
     private HashMap<String, Instruction> instructionsTable;
@@ -203,7 +202,9 @@ public class Assembler {
                         break;
 
                     case "END":
-                        // Aqui ainda tem que verificar se todos os valores da tabela de definição interna estão definidos a.k.a. são diferentes de null
+                        if (verifyTableAllSymbolsAreDefined(globalDefinitionTable) == false || verifyTableAllSymbolsAreDefined(internalDefinitionTable) == false) {
+                            throw new UndefinedLabel("ERROR at line " + lineCounter + ": Found a END pseudo instruction, but not all labels have been defined yet!!! Undefined labels are: "+ getUndefinedLabels(globalDefinitionTable) + getUndefinedLabels(internalDefinitionTable));
+                        }
                         this.lineCounter = 0;
                         this.addressCounter = 0;
                         scanner.close();
@@ -318,9 +319,6 @@ public class Assembler {
     private void secondStep(String filename)
     throws EndNotFound, LineTooLong, MalformedToken, InvalidDigit, FailToReadTokens, RedefinedSymbol, WrongNumberOfOperands, UnidentifiedInstruction, IOException, UndefinedLabel, UndefinedAddressingMode
     {
-        // As pseudo instruções CONST e SPACE provavelmente vão ter que implementar o método
-        // toBinaryString, porque elas vão estar no cógigo montado (CONST terá o valor e SPACE terá 0) ?!
-
         Scanner scanner = new Scanner(new File(filename));
         
         File output = new File(System.getProperty("java.class.path").split(";")[0] + "/assembler/" + filename.substring(filename.lastIndexOf("/"), filename.lastIndexOf(".")) + ".OBJ");
@@ -613,26 +611,24 @@ public class Assembler {
     private int parseNumber(String number) throws NumberFormatException {
         int result = 0;
         
-        if (isStringInteger(number)){
+        if (number.matches("\\d+")){
             result = Integer.parseInt(number);
         }
+        else if (number.matches("H'[0-9A-F]+'")){
+            result = Integer.parseInt(number, 2, number.length() - 1, 16);
+        }
+        else if (number.matches("@\\d+")){
+            // Literal em decimal what the fuck??
+        }
         else {
-            if (number.startsWith("H'") && number.endsWith("'")){
-                result = Integer.parseInt(number, 2, number.length() - 1, 16);
-            }
-            else if (number.startsWith("@")){
-                // Literal em decimal what the fuck??
-            }
-            else {
-                throw new NumberFormatException("Unknown number format " + number);
-            }
+            throw new NumberFormatException("Unknown number format " + number);
         }
 
         return result;
     }
 
     private boolean isStringInteger(String string){
-        return string.matches("\\d+");
+        return string.matches("\\d+") || string.matches("H'[0-9A-F]+'") || string.matches("@\\d+");
     }
 
     private boolean checkLabel(String label){
@@ -661,6 +657,19 @@ public class Assembler {
             operand.endsWith(",I")
         ){
             throw new MalformedToken("The operand <" +operand + "> cannot have two distinct addressing modes!!!");
+        }
+        return result;
+    }
+    private boolean verifyTableAllSymbolsAreDefined(HashMap<String, TableEntry> table){
+        for (TableEntry entry : table.values()) {
+            if (entry.getAddress() == null) return false;
+        }
+        return true;
+    }
+    private String getUndefinedLabels(HashMap<String, TableEntry> table){
+        String result = "";
+        for (TableEntry entry : table.values()) {
+            if (entry.getAddress() == null) result += entry.getLabel() + " ";
         }
         return result;
     }
