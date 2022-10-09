@@ -47,7 +47,7 @@ public enum AddressingMode {
         }
 
         if (operand2 != null) {
-            switch (operand1) {
+            switch (operand2) {
                 case INDIRECT:
                     opcode = opcode | 0b0010_0000;
                     break;

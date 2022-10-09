@@ -1,7 +1,11 @@
 package assembler;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -12,12 +16,15 @@ import assembler.errors.LineTooLong;
 import assembler.errors.MalformedToken;
 import assembler.errors.WrongNumberOfOperands;
 import assembler.errors.RedefinedSymbol;
+import assembler.errors.UndefinedLabel;
 import assembler.errors.UnidentifiedInstruction;
 import assembler.pseudo_instructions.*;
 import main.instructions.*;
+import main.AddressingMode;
 import main.Instruction;
 import main.OneOperandInstruction;
 import main.TwoOperandInstruction;
+import main.errors.UndefinedAddressingMode;
 import main.errors.UnknownInstrucion;
 
 public class Assembler {
@@ -98,10 +105,8 @@ public class Assembler {
     }
 
     public void assemble(String fileName) throws FileNotFoundException {
-        File file = new File(fileName);
-        Scanner scanner = new Scanner(file);
         try {
-            firstStep(scanner);
+            firstStep(fileName);
         }
         catch (EndNotFound endNotFound){
             System.out.println(endNotFound.getMessage());
@@ -125,9 +130,10 @@ public class Assembler {
         }
     }
 
-    private void firstStep(Scanner scanner) 
-    throws EndNotFound, LineTooLong, MalformedToken, InvalidDigit, FailToReadTokens, RedefinedSymbol, WrongNumberOfOperands, UnidentifiedInstruction 
+    private void firstStep(String filename) 
+    throws EndNotFound, LineTooLong, MalformedToken, InvalidDigit, FailToReadTokens, RedefinedSymbol, WrongNumberOfOperands, UnidentifiedInstruction, IOException, UndefinedLabel, UndefinedAddressingMode
     {
+        Scanner scanner = new Scanner(new File(filename));
         LineHandler lineHandler = new LineHandler();
         while (scanner.hasNextLine()) {
             try {
@@ -200,7 +206,8 @@ public class Assembler {
                         // Aqui ainda tem que verificar se todos os valores da tabela de definição interna estão definidos a.k.a. são diferentes de null
                         this.lineCounter = 0;
                         this.addressCounter = 0;
-                        secondStep(scanner.reset());
+                        scanner.close();
+                        secondStep(filename);
                         return;
 
                     case "INTDEF":
@@ -308,9 +315,299 @@ public class Assembler {
         throw new EndNotFound("The END Pseudo Instruction was not found in the file");
     }
     
-    private void secondStep(Scanner scanner){
+    private void secondStep(String filename)
+    throws EndNotFound, LineTooLong, MalformedToken, InvalidDigit, FailToReadTokens, RedefinedSymbol, WrongNumberOfOperands, UnidentifiedInstruction, IOException, UndefinedLabel, UndefinedAddressingMode
+    {
         // As pseudo instruções CONST e SPACE provavelmente vão ter que implementar o método
         // toBinaryString, porque elas vão estar no cógigo montado (CONST terá o valor e SPACE terá 0) ?!
+
+        Scanner scanner = new Scanner(new File(filename));
+        
+        File output = new File(System.getProperty("java.class.path").split(";")[0] + "/assembler/" + filename.substring(filename.lastIndexOf("/"), filename.lastIndexOf(".")) + ".OBJ");
+        output.createNewFile();
+        FileWriter assembled_file = new FileWriter(output);
+
+        File list_output = new File(System.getProperty("java.class.path").split(";")[0] + "/assembler/" + filename.substring(filename.lastIndexOf("/"), filename.lastIndexOf(".")) + ".LST");
+        list_output.createNewFile();
+        FileWriter list_file = new FileWriter(list_output);
+        
+        LineHandler lineHandler = new LineHandler();
+        while (scanner.hasNextLine()) {
+            try {
+                lineHandler.readLine(scanner);
+            }
+            catch (LineTooLong lineTooLong) {
+                throw new LineTooLong("ERROR at line " + lineCounter + ": " + lineTooLong.getMessage());
+            }
+            catch (FailToReadTokens failToReadTokens){
+                throw new FailToReadTokens("ERROR at line " + lineCounter + ": " + failToReadTokens.getMessage());
+            }
+
+            if (lineHandler.isComentary() == false) {
+                String label = lineHandler.getLabel();
+                String mnemonic = lineHandler.getMnemonic();
+                String operand1 = lineHandler.getOperand1();
+                String operand2 = lineHandler.getOperand2();
+
+                String line = "";
+
+                if (mnemonic.isBlank()){
+                    throw new FailToReadTokens("ERROR at line " + lineCounter + ": " + "expected a Instruction or Pseudo-Instruction at the second column!!!");
+                }
+
+                // Todo rótulo já deve ter sido definido neste ponto
+                if (label.isBlank() == false){
+                    if (checkLabel(label) == false){
+                        throw new MalformedToken("ERROR at line " + lineCounter + ": The label <" + label + "> is malformed");
+                    }
+                    if (globalDefinitionTable.containsKey(label)){
+                        if (globalDefinitionTable.get(label).getAddress() == null){
+                            throw new UndefinedLabel("ERROR at line " + lineCounter + ", in second step: The label <"+ label + "> should aready be defined at this point!!!");
+                        }
+                    }
+                    if (internalDefinitionTable.containsKey(label)){
+                        if (internalDefinitionTable.get(label).getAddress() == null){
+                            throw new UndefinedLabel("ERROR at line " + lineCounter + ", in second step: The label <"+ label + "> should aready be defined at this point!!!");
+                        }
+                    }
+                }
+
+                // Trata das pseudo instruções e das intruções
+                if (pseudoInstructionsTable.containsKey(mnemonic)){
+                    PseudoInstruction pseudo_intruction = pseudoInstructionsTable.get(mnemonic);
+
+                    switch (mnemonic) {
+                    case "START":
+                        if (operand1.isBlank() == false){
+                            if (isStringInteger(operand1)){
+                                this.addressCounter = parseNumber(operand1);
+                            }
+                            else {
+                                throw new MalformedToken("ERROR at line " + lineCounter + ": Expected a number after START, got <" + operand1 + ">!!!");
+                            }
+                        }
+                        // Aqui talvez tenha que ser passado para o ligador e posteriormente para o carregador
+                        // a posição que começa a ser executado o programa
+                        break;
+
+                    case "END":
+                        // Aqui deve ser salvo em arquivos (binário ou texto) que serão utilizados pelo ligador 
+                        // Salvar as tabelas de definições globais e a de usos internos
+                        scanner.close();
+                        assembled_file.close();
+                        list_file.close();
+                        return;
+
+                    case "INTDEF":
+                        // Nada a fazer no segundo passo para esta pseudo-instrução
+                        break; 
+
+                    case "INTUSE":
+                        // Nada a fazer no segundo passo para esta pseudo-instrução
+                        break;
+
+                    case "SPACE":
+                        line = "\t\t0\t|\t0\n";
+                        assembled_file.write(line);
+                        list_file.write("line: " + lineCounter + "\t addr: " + addressCounter + "\t#\t" +lineHandler.toString() + "\t-->>" + line.substring(line.indexOf("|", 0) +1));
+                        break;
+
+                    case "STACK":
+                        // Não sei o que fazer para esta pseudo-instrução
+                        break;
+
+                    case "CONST":
+                        Integer const_value;
+                        if (checkLabel(operand1)){
+                            Integer value = null;
+                            if (globalDefinitionTable.containsKey(operand1)){
+                                value = globalDefinitionTable.get(operand1).getAddress();
+                            }
+                            else if (internalDefinitionTable.containsKey(operand1)){
+                                value = internalDefinitionTable.get(operand1).getAddress();
+                            }
+
+                            if (value == null) {
+                                throw new UndefinedLabel("ERROR at line " + lineCounter +", second step: The label <"+operand1+"> is not defined!!!");
+                            }
+                            const_value = value;
+                        }
+                        else if (isStringInteger(operand1)){
+                            const_value = parseNumber(operand1);
+                        }
+                        else {
+                            throw new MalformedToken("ERROR at line " + lineCounter + ", second step: Unknown format of operand <"+operand1+">!!!");
+                        }
+                        line = "\t\t0\t|\t"+const_value.toString()+"\n";
+                        assembled_file.write(line);
+                        list_file.write("line: " + lineCounter + "\t addr: " + addressCounter + "\t#\t" +lineHandler.toString() + "\t-->>" + line.substring(line.indexOf("|", 0) +1));
+                        break;
+
+                    default:
+                        throw new UnidentifiedInstruction("ERROR at line " + lineCounter + ": " + mnemonic + " is not a valid Pseudo-Instruction!!!");
+                    }
+                    addressCounter += pseudo_intruction.getInstructionSize();
+                }
+                else if (instructionsTable.containsKey(mnemonic)){
+                    Instruction intruction = instructionsTable.get(mnemonic);
+
+                    if (intruction instanceof TwoOperandInstruction){
+                        Integer operand1_value = null;
+                        Integer operand2_value = null;
+                        
+                        AddressingMode operand1_AddressingMode;
+                        AddressingMode operand2_AddressingMode;
+                        
+                        try {
+                            operand1_AddressingMode = getOperandAddressingMode(operand1);
+                            operand2_AddressingMode = getOperandAddressingMode(operand2);
+                        }
+                        catch (MalformedToken malformedToken){
+                            throw new MalformedToken("ERROR at line " + lineCounter + ", second step: "+ malformedToken.getMessage());
+                        }
+                        
+                        if (operand1.isBlank()){
+                            throw new WrongNumberOfOperands("ERROR at line " + lineCounter + ": Instruction <"+ intruction.getMnemonic() +"> expects operand 1 not to be empty!!!");
+                        }
+                        if (isStringInteger(stripAddressingMode(operand1)) == false){
+                            if (internalUseTable.containsKey(stripAddressingMode(operand1))){
+                                operand1_value = null;
+                            }
+                            else if (globalDefinitionTable.containsKey(stripAddressingMode(operand1))){
+                                operand1_value = globalDefinitionTable.get(stripAddressingMode(operand1)).getAddress();
+                            }
+                            else if (internalDefinitionTable.containsKey(stripAddressingMode(operand1))){
+                                operand1_value = internalDefinitionTable.get(stripAddressingMode(operand1)).getAddress();
+                            } 
+                            else {
+                                throw new UndefinedLabel("ERROR at line " + lineCounter + ": The label " + operand1 + " is not defined!!!");
+                            }
+                        }
+                        else {
+                            operand1_value = parseNumber(stripAddressingMode(operand1));
+                        }
+
+                        if (operand2.isBlank()){
+                            throw new WrongNumberOfOperands("ERROR at line " + lineCounter + ": Instruction <"+ intruction.getMnemonic() +"> expects operand 2 not to be empty!!!");
+                        }
+                        if (isStringInteger(stripAddressingMode(operand2)) == false){
+                            if (internalUseTable.containsKey(stripAddressingMode(operand2))){
+                                operand2_value = null;
+                            }
+                            else if (globalDefinitionTable.containsKey(stripAddressingMode(operand2))){
+                                operand2_value = globalDefinitionTable.get(stripAddressingMode(operand2)).getAddress();
+                            }
+                            else if (internalDefinitionTable.containsKey(stripAddressingMode(operand2))){
+                                operand2_value = internalDefinitionTable.get(stripAddressingMode(operand2)).getAddress();
+                            }
+                            else {
+                                throw new UndefinedLabel("ERROR at line " + lineCounter + ": The label " + operand2 + " is not defined!!!");
+                            }
+                        }
+                        else {
+                            operand2_value = parseNumber(stripAddressingMode(operand2));
+                        }
+
+                        // Line creation and write to file
+                        TwoOperandInstruction two_opd_instruction = ((TwoOperandInstruction) intruction);
+                        try {
+                            two_opd_instruction.setCurrentOperand1AddressingMode((short) AddressingMode.opcodeByAddressingMode(intruction.getOpcode() , operand1_AddressingMode, null));
+                        }
+                        catch (UndefinedAddressingMode undefinedAddressingMode) {
+                            throw new UndefinedAddressingMode("ERROR at line " + lineCounter + ", second step: Wrong operand 1 addressing mode for instruction " + intruction.getMnemonic() + "!!!");
+                        }
+                        try {
+                            two_opd_instruction.setCurrentOperand2AddressingMode((short) AddressingMode.opcodeByAddressingMode(intruction.getOpcode() , null, operand2_AddressingMode));
+                        }
+                        catch (UndefinedAddressingMode undefinedAddressingMode) {
+                            throw new UndefinedAddressingMode("ERROR at line " + lineCounter + ", second step: Wrong operand 2 addressing mode for instruction " + intruction.getMnemonic() + "!!!");
+                        }
+
+                        // Creation of the realocation part
+                        line = "0\t";
+                        line += operand1_AddressingMode == AddressingMode.IMMEDIATE ? "0" : "1";
+                        line += "\t";
+                        line += operand2_AddressingMode == AddressingMode.IMMEDIATE ? "0" : "1";
+                        line += "\t|\t";
+
+                        // Creation of the mnemonic and operators part
+                        line += (short) AddressingMode.opcodeByAddressingMode(intruction.getOpcode() , operand1_AddressingMode, operand2_AddressingMode);
+                        line += "\t";
+                        line += operand1_value == null ? stripAddressingMode(operand1) : operand1_value;
+                        line += "\t";
+                        line += operand2_value == null ? stripAddressingMode(operand2) : operand2_value;
+                        line += "\n";
+                    }
+                    else if (intruction instanceof OneOperandInstruction){
+                        Integer operand1_value = null;
+                        
+                        AddressingMode operand1_AddressingMode;
+                        
+                        try {
+                            operand1_AddressingMode = getOperandAddressingMode(operand1);
+                        }
+                        catch (MalformedToken malformedToken){
+                            throw new MalformedToken("ERROR at line " + lineCounter + ", second step: "+ malformedToken.getMessage());
+                        }
+                        
+                        if (operand1.isBlank()){
+                            throw new WrongNumberOfOperands("ERROR at line " + lineCounter + ": Instruction <"+ intruction.getMnemonic() +"> expects operand 1 not to be empty!!!");
+                        }
+                        if (isStringInteger(stripAddressingMode(operand1)) == false){
+                            if (internalUseTable.containsKey(stripAddressingMode(operand1))){
+                                operand1_value = null;
+                            }
+                            else if (globalDefinitionTable.containsKey(stripAddressingMode(operand1))){
+                                operand1_value = globalDefinitionTable.get(stripAddressingMode(operand1)).getAddress();
+                            }
+                            else if (internalDefinitionTable.containsKey(stripAddressingMode(operand1))){
+                                operand1_value = internalDefinitionTable.get(stripAddressingMode(operand1)).getAddress();
+                            }
+                            else {
+                                throw new UndefinedLabel("ERROR at line " + lineCounter + ": The label " + operand1 + " is not defined!!!");
+                            }
+                        }
+                        else {
+                            operand1_value = parseNumber(stripAddressingMode(operand1));
+                        }
+
+                        // Line creation and write to file
+                        OneOperandInstruction one_opd_instruction = ((OneOperandInstruction) intruction);
+                        try {
+                            one_opd_instruction.setCurrentOperand1AddressingMode((short) AddressingMode.opcodeByAddressingMode(intruction.getOpcode() , operand1_AddressingMode, null));
+                        }
+                        catch (UndefinedAddressingMode undefinedAddressingMode) {
+                            throw new UndefinedAddressingMode("ERROR at line " + lineCounter + ", second step: Wrong operand 1 addressing mode for instruction " + intruction.getMnemonic() + "!!!");
+                        }
+
+                        // Creation of the realocation part
+                        line = "\t";
+                        line += "0\t";
+                        line += operand1_AddressingMode == AddressingMode.IMMEDIATE ? "0" : "1";
+                        line += "\t|\t";
+
+                        // Creation of the mnemonic and operators part
+                        line += (short) AddressingMode.opcodeByAddressingMode(intruction.getOpcode() , operand1_AddressingMode, null);
+                        line += "\t";
+                        line += operand1_value == null ? stripAddressingMode(operand1) : operand1_value;
+                        line += "\n";
+                    }
+                    else {
+                        line = "\t\t0\t|\t" + intruction.toDecimalString() + "\n";
+                    }
+
+                    assembled_file.write(line);
+                    list_file.write("line: " + lineCounter + "\t addr: " + addressCounter + "\t#\t" +lineHandler.toString() + "\t-->>" + line.substring(line.indexOf("|", 0) +1));
+
+                    addressCounter += intruction.getInstructionSize();
+                }
+                else {
+                    throw new UnidentifiedInstruction("ERROR at line " + lineCounter + ": " + mnemonic + " is not either a valid Instructions or a Pseudo-Instruction!!!");
+                }
+            }
+            lineCounter++;
+        }
+        throw new EndNotFound("The END Pseudo Instruction was not found in the file");
     }
 
     private int parseNumber(String number) throws NumberFormatException {
@@ -348,6 +645,22 @@ public class Assembler {
         }
         if (result.endsWith(",I")){
             result = result.substring(0, result.indexOf(",I", 0));
+        }
+        return result;
+    }
+    private AddressingMode getOperandAddressingMode(String operand) throws MalformedToken {
+        AddressingMode result = AddressingMode.DIRECT;
+        if (operand.startsWith("#")){
+            result = AddressingMode.IMMEDIATE;
+        }
+        if (operand.endsWith(",I")){
+            result = AddressingMode.INDIRECT;
+        }
+
+        if (operand.startsWith("#") &&
+            operand.endsWith(",I")
+        ){
+            throw new MalformedToken("The operand <" +operand + "> cannot have two distinct addressing modes!!!");
         }
         return result;
     }

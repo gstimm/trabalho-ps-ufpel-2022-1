@@ -99,5 +99,14 @@ public class LineHandler {
         return isComentary;
     }
 
+    @Override
+    public String toString(){
+        return  this.label + "\t" +
+                this.mnemonic + "\t" +
+                this.operand1 + "\t" + 
+                this.operand2;
+
+    }
+
 }
 
