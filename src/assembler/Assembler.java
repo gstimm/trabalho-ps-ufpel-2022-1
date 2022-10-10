@@ -18,6 +18,7 @@ import assembler.errors.WrongNumberOfOperands;
 import assembler.errors.RedefinedSymbol;
 import assembler.errors.UndefinedLabel;
 import assembler.errors.UnidentifiedInstruction;
+import assembler.errors.UnusedSymbols;
 import assembler.pseudo_instructions.*;
 import main.instructions.*;
 import main.AddressingMode;
@@ -130,7 +131,7 @@ public class Assembler {
     }
 
     private void firstStep(String filename) 
-    throws EndNotFound, LineTooLong, MalformedToken, InvalidDigit, FailToReadTokens, RedefinedSymbol, WrongNumberOfOperands, UnidentifiedInstruction, IOException, UndefinedLabel, UndefinedAddressingMode
+    throws EndNotFound, LineTooLong, MalformedToken, InvalidDigit, FailToReadTokens, RedefinedSymbol, WrongNumberOfOperands, UnidentifiedInstruction, IOException, UndefinedLabel, UndefinedAddressingMode, UnusedSymbols
     {
         Scanner scanner = new Scanner(new File(filename));
         LineHandler lineHandler = new LineHandler();
@@ -205,6 +206,11 @@ public class Assembler {
                         if (verifyTableAllSymbolsAreDefined(globalDefinitionTable) == false || verifyTableAllSymbolsAreDefined(internalDefinitionTable) == false) {
                             throw new UndefinedLabel("ERROR at line " + lineCounter + ": Found a END pseudo instruction, but not all labels have been defined yet!!! Undefined labels are: "+ getUndefinedLabels(globalDefinitionTable) + getUndefinedLabels(internalDefinitionTable));
                         }
+                        // Pode ser apenas um warning
+                        if (verifyAllInternalUseSymbolsAreUsed() == false){
+                            throw new UnusedSymbols("ERROR at line " + lineCounter + ": Found the END of file, but there are symbols marked as internal use from other modules not being used!!! Symbols are: "+ getUnusedInternalSymbolTable());
+                        }
+                        this.saveInternalUseTable(filename);
                         this.lineCounter = 0;
                         this.addressCounter = 0;
                         scanner.close();
@@ -670,6 +676,30 @@ public class Assembler {
         String result = "";
         for (TableEntry entry : table.values()) {
             if (entry.getAddress() == null) result += entry.getLabel() + " ";
+        }
+        return result;
+    }
+    private void saveInternalUseTable(String filename) throws IOException {
+        File output = new File(filename.substring(0, filename.lastIndexOf(".")) + ".USE");
+        output.createNewFile();
+        FileWriter use_table_file = new FileWriter(output);
+        
+        // Pular os símbolos que não são utilizados?
+        for (InternalUseTableEntry entry : internalUseTable.values()) {
+            use_table_file.write(entry.getLabel() + "\t" + entry.getOccurences().toString() + "\n");
+        }
+        use_table_file.close();
+    }
+    private boolean verifyAllInternalUseSymbolsAreUsed(){
+        for (InternalUseTableEntry entry : internalUseTable.values()) {
+            if (entry.getOccurences().isEmpty()) return false;
+        }
+        return true;
+    }
+    private String getUnusedInternalSymbolTable(){
+        String result = "";
+        for (InternalUseTableEntry entry : internalUseTable.values()) {
+            if (entry.getOccurences().isEmpty()) result += entry.getLabel() + " ";
         }
         return result;
     }
