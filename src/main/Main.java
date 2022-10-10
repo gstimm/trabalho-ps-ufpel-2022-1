@@ -205,8 +205,7 @@
 //                             updateOutput();
 //                             break;
 //                         case CONTINUOUS:
-//                             while (registers.getRI() != stop_instruction.getOpcode()
-//                                     && ExecutionMode.getExecutionMode(registers.getMOP()) == ExecutionMode.CONTINUOUS) {
+//                             while (ExecutionMode.getExecutionMode(registers.getMOP()) == ExecutionMode.CONTINUOUS) {
 //                                 maquina_virtual.cycle();
 //                                 updateCurrentInstruction();
 //                                 updateRegisters();
@@ -214,9 +213,13 @@
 //                                 updateStack();
 //                                 updateOutput();
 //                                 try {
-//                                     Thread.sleep((1 / clock.getValue()) * 1000);
+//                                     Thread.sleep((long) (1000 / clock.getValue()));
 //                                 } catch (Exception o) {
 //                                     o.printStackTrace();
+//                                     break;
+//                                 }
+//                                 if (registers.getRI() == stop_instruction.getOpcode()){
+//                                     Thread.currentThread().interrupt();
 //                                     break;
 //                                 }
 //                             }
@@ -327,5 +330,12 @@
 
 //     public void updateRE() {
 //         registers.setRE(Short.parseShort(RE_value.getText()));
+//     }
+
+//     public void assembleFile(){
+//         // Exibe uma janela de seleção de arquivos
+//         // Chama o método Assembler.assemble para cada arquivo selecionado
+//         // Caso ocorra erro, mostra numa janelinha que ocorreram erros
+//         // Caso contrário mostra uma janelinha de ok
 //     }
 // }
