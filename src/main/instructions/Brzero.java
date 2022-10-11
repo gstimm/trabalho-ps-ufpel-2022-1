@@ -27,7 +27,7 @@ public class Brzero extends Instruction implements OneOperandInstruction, Execut
 
     public void doOperation(Registers registers, Memory memory) {
         if (registers.getACC() == 0) {
-            registers.setPC(memory.getMemoryPosition(operand1));
+            registers.setPC(operand1);
         }
     }
 

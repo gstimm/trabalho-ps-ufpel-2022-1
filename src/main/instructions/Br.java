@@ -26,7 +26,7 @@ public class Br extends Instruction implements OneOperandInstruction, ExecuteOpe
     }
 
     public void doOperation(Registers registers, Memory memory) {
-        registers.setPC(memory.getMemoryPosition(operand1));
+        registers.setPC(operand1);
     }
 
     public short getOperand1() {
