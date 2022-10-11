@@ -1,11 +1,9 @@
 package assembler;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -46,7 +44,7 @@ public class Assembler {
     public Assembler(){
         this.instructionsTable = new HashMap<>();
         this.pseudoInstructionsTable = new HashMap<>();
-        this.lineCounter = 0;
+        this.lineCounter = 1;
         this.addressCounter = 0;
 
         PseudoInstruction aux;
@@ -180,7 +178,7 @@ public class Assembler {
                         }
                     }
                     else {
-                        internalDefinitionTable.put(label, new TableEntry(label, addressCounter, 'r'));
+                        internalDefinitionTable.put(label, new TableEntry(label, addressCounter));
                     }
                 }
 
@@ -210,8 +208,9 @@ public class Assembler {
                         if (verifyAllInternalUseSymbolsAreUsed() == false){
                             throw new UnusedSymbols("ERROR at line " + lineCounter + ": Found the END of file, but there are symbols marked as internal use from other modules not being used!!! Symbols are: "+ getUnusedInternalSymbolTable());
                         }
+                        this.saveGlobalDefinitionTable(filename);
                         this.saveInternalUseTable(filename);
-                        this.lineCounter = 0;
+                        this.lineCounter = 1;
                         this.addressCounter = 0;
                         scanner.close();
                         secondStep(filename);
@@ -227,10 +226,11 @@ public class Assembler {
                         
                         if (isStringInteger(operand1) == false && checkLabel(operand1) == true){
                             if (internalDefinitionTable.containsKey(operand1)){
-                                internalDefinitionTable.remove(operand1);
+                                TableEntry entry = internalDefinitionTable.remove(operand1);
+                                globalDefinitionTable.put(operand1, entry);
                             }
-                            if (globalDefinitionTable.containsKey(operand1) == false){
-                                globalDefinitionTable.put(operand1, new TableEntry(operand1, null, 'r'));
+                            else if (globalDefinitionTable.containsKey(operand1) == false){
+                                globalDefinitionTable.put(operand1, new TableEntry(operand1, null));
                             }
                             else {
                                 throw new RedefinedSymbol("ERROR at line " + lineCounter + ": The symbol <" + operand1 + "> was already in the Global Definition Table!!!");
@@ -289,7 +289,7 @@ public class Assembler {
                             else if (globalDefinitionTable.containsKey(operand1) == false &&
                                      internalDefinitionTable.containsKey(operand1) == false
                             ){
-                                internalDefinitionTable.put(operand1, new TableEntry(operand1, null, 'r'));
+                                internalDefinitionTable.put(operand1, new TableEntry(operand1, null));
                             }
                         }
                     }
@@ -305,7 +305,7 @@ public class Assembler {
                             else if (globalDefinitionTable.containsKey(operand2) == false &&
                                      internalDefinitionTable.containsKey(operand2) == false
                             ){
-                                internalDefinitionTable.put(operand2, new TableEntry(operand1, null, 'r'));
+                                internalDefinitionTable.put(operand2, new TableEntry(operand1, null));
                             }
                         }
                     }
@@ -689,6 +689,17 @@ public class Assembler {
             use_table_file.write(entry.getLabel() + "\t" + entry.getOccurences().toString() + "\n");
         }
         use_table_file.close();
+    }
+    private void saveGlobalDefinitionTable(String filename) throws IOException {
+        File output = new File(filename.substring(0, filename.lastIndexOf(".")) + ".GLO");
+        output.createNewFile();
+        FileWriter global_definition_table = new FileWriter(output);
+        
+        // Pular os símbolos que não são utilizados?
+        for (TableEntry entry : globalDefinitionTable.values()) {
+            global_definition_table.write(entry.getLabel() + "\t" + entry.getAddress() + "\n");
+        }
+        global_definition_table.close();
     }
     private boolean verifyAllInternalUseSymbolsAreUsed(){
         for (InternalUseTableEntry entry : internalUseTable.values()) {

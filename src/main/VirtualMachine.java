@@ -51,16 +51,23 @@ public class VirtualMachine {
     public void readFile(String fileName) throws IndexOutOfBoundsException, FileNotFoundException{
         File file = new File(fileName);
         Scanner scanner = new Scanner(file);
-        int next_index = cpu.getRegisters().getPC();
+        short next_index = cpu.getRegisters().getPC();
+        short start_position_of_code = cpu.getRegisters().getPC();
         while (scanner.hasNextLine()){
             String linha = scanner.nextLine();
-            String tokens[] = linha.split("\\s+");
-            if (tokens[0].startsWith("X")) {
+            String linha_separada[] = linha.split("\\|");
+            if (linha_separada.length == 0) return; // Arquivo com erro
+            String codigo_de_maquina[] = linha_separada[1].strip().split("\\s+");
+            String modo_realocacao[] = linha_separada[0].strip().split("\\s+");
+            if (modo_realocacao.length != codigo_de_maquina.length) return; // Arquivo com erro
+            for (int c = 0; c < codigo_de_maquina.length; c++){
+                if (Short.parseShort(modo_realocacao[c]) == 1){
+                    memory.setMemoryPosition(next_index, (short) (Short.parseShort(codigo_de_maquina[c]) + start_position_of_code));
+                }
+                else {
+                    memory.setMemoryPosition(next_index, Short.parseShort(codigo_de_maquina[c]));
+                }
                 next_index++;
-                continue;
-            }
-            for (int c = 0; c < tokens.length; c++){
-                memory.setMemoryPosition(next_index++, Short.parseShort(tokens[c]));
             }
         }
         scanner.close();

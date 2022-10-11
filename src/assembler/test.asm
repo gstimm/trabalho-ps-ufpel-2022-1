@@ -1,14 +1,28 @@
+* ESTE PROGRAMA LÊ UM NÚMERO E MOSTRA OS X PRIMEIROS
+* TERMOS DA SEQUÊNCIA DE FIBBONACI
 TESTE   START   0
-FAC     INTUSE
-        INTDEF  VAR1
-* ESTE É UM COMENTÁRIO
-        COPY    NEW   #3    * Copia o valor 3 para o endereço NEW, modo imediato
-        WRITE   OLD
-        READ    FAC,I   * Modo indireto
-        CALL    PARA
-        DIVIDE  FAC
-PARA    STOP
-OLD     CONST   H'5A'
-NEW     SPACE   
-VAR1    CONST   9
+        INTDEF  FIBO
+        READ    NUMBER
+FIBO    LOAD    NUMBER
+        BRNEG   FINAL
+* DECREMENTA O NÚMERO
+        SUB     #1
+        STORE   NUMBER
+* CALCULA O AUX
+        LOAD    A
+        ADD     B
+        STORE   AUX
+* A = B
+        LOAD    B
+        STORE   A
+* B = AUX
+        LOAD    AUX
+        STORE   B
+        WRITE   AUX
+        BR      FIBO
+FINAL   STOP
+A       CONST   0
+B       CONST   1
+AUX     SPACE
+NUMBER  SPACE
         END
