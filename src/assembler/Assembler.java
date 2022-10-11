@@ -1,29 +1,14 @@
 package assembler;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import assembler.errors.EndNotFound;
-import assembler.errors.FailToReadTokens;
-import assembler.errors.InvalidDigit;
-import assembler.errors.LineTooLong;
-import assembler.errors.MalformedToken;
-import assembler.errors.WrongNumberOfOperands;
-import assembler.errors.RedefinedSymbol;
-import assembler.errors.UndefinedLabel;
-import assembler.errors.UnidentifiedInstruction;
-import assembler.errors.UnusedSymbols;
+import assembler.errors.*;
 import assembler.pseudo_instructions.*;
 import main.instructions.*;
-import main.AddressingMode;
-import main.Instruction;
-import main.OneOperandInstruction;
-import main.TwoOperandInstruction;
-import main.errors.UndefinedAddressingMode;
+import main.*;
+import main.errors.*;
 
 public class Assembler {
     private HashMap<String, Instruction> instructionsTable;
@@ -102,24 +87,9 @@ public class Assembler {
         this.internalUseTable = new HashMap<>();
     }
 
-    public void assemble(String fileName) throws FileNotFoundException {
+    public void assemble(String fileName) {
         try {
             firstStep(fileName);
-        }
-        catch (EndNotFound endNotFound){
-            System.out.println(endNotFound.getMessage());
-            endNotFound.printStackTrace();
-            System.exit(-1);
-        }
-        catch (InvalidDigit invalidDigit){
-            System.out.println(invalidDigit.getMessage());
-            invalidDigit.printStackTrace();
-            System.exit(-1);
-        }
-        catch (RedefinedSymbol redefinedSymbol){
-            System.out.println(redefinedSymbol.getMessage());
-            redefinedSymbol.printStackTrace();
-            System.exit(-1);
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -327,11 +297,11 @@ public class Assembler {
     {
         Scanner scanner = new Scanner(new File(filename));
         
-        File output = new File(System.getProperty("java.class.path").split(";")[0] + "/assembler/" + filename.substring(filename.lastIndexOf("/"), filename.lastIndexOf(".")) + ".OBJ");
+        File output = new File(filename.substring(0, filename.length() - 4) + ".OBJ");
         output.createNewFile();
         FileWriter assembled_file = new FileWriter(output);
 
-        File list_output = new File(System.getProperty("java.class.path").split(";")[0] + "/assembler/" + filename.substring(filename.lastIndexOf("/"), filename.lastIndexOf(".")) + ".LST");
+        File list_output = new File(filename.substring(0, filename.length() - 4) + ".LST");
         list_output.createNewFile();
         FileWriter list_file = new FileWriter(list_output);
         

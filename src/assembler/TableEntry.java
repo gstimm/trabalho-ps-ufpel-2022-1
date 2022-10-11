@@ -3,7 +3,6 @@ package assembler;
 public class TableEntry {
     private String label;
     private Integer address;
-    private Character realocation_mode;
     
     public TableEntry(String label, Integer address) {
         this.label = label;
