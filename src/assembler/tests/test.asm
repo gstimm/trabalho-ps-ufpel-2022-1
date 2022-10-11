@@ -4,10 +4,12 @@ TESTE   START   0
         INTDEF  FIBO
         READ    NUMBER
 FIBO    LOAD    NUMBER
+        BRZERO  FINAL
         BRNEG   FINAL
 * DECREMENTA O NÚMERO
         SUB     #1
         STORE   NUMBER
+        WRITE   B
 * CALCULA O AUX
         LOAD    A
         ADD     B
@@ -18,7 +20,6 @@ FIBO    LOAD    NUMBER
 * B = AUX
         LOAD    AUX
         STORE   B
-        WRITE   AUX
         BR      FIBO
 FINAL   STOP
 A       CONST   0

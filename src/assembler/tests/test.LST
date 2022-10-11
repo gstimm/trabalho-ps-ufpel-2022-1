@@ -1,19 +1,20 @@
-line: 5	 addr: 0	#		READ	NUMBER		-->>	12	32
-line: 6	 addr: 2	#	FIBO	LOAD	NUMBER		-->>	3	32
-line: 7	 addr: 4	#		BRNEG	FINAL		-->>	5	28
-line: 9	 addr: 6	#		SUB	#1		-->>	134	1
-line: 10	 addr: 8	#		STORE	NUMBER		-->>	7	32
-line: 12	 addr: 10	#		LOAD	A		-->>	3	29
-line: 13	 addr: 12	#		ADD	B		-->>	2	30
-line: 14	 addr: 14	#		STORE	AUX		-->>	7	31
-line: 16	 addr: 16	#		LOAD	B		-->>	3	30
-line: 17	 addr: 18	#		STORE	A		-->>	7	29
-line: 19	 addr: 20	#		LOAD	AUX		-->>	3	31
-line: 20	 addr: 22	#		STORE	B		-->>	7	30
-line: 21	 addr: 24	#		WRITE	AUX		-->>	8	31
-line: 22	 addr: 26	#		BR	FIBO		-->>	0	2
-line: 23	 addr: 28	#	FINAL	STOP			-->>	11
-line: 24	 addr: 29	#	A	CONST	0		-->>	0
-line: 25	 addr: 30	#	B	CONST	1		-->>	1
-line: 26	 addr: 31	#	AUX	SPACE			-->>	0
-line: 27	 addr: 32	#	NUMBER	SPACE			-->>	0
+line: 5	 addr: 0	#		READ	NUMBER		-->>	12	34
+line: 6	 addr: 2	#	FIBO	LOAD	NUMBER		-->>	3	34
+line: 7	 addr: 4	#		BRZERO	FINAL		-->>	4	30
+line: 8	 addr: 6	#		BRNEG	FINAL		-->>	5	30
+line: 10	 addr: 8	#		SUB	#1		-->>	134	1
+line: 11	 addr: 10	#		STORE	NUMBER		-->>	7	34
+line: 12	 addr: 12	#		WRITE	B		-->>	8	32
+line: 14	 addr: 14	#		LOAD	A		-->>	3	31
+line: 15	 addr: 16	#		ADD	B		-->>	2	32
+line: 16	 addr: 18	#		STORE	AUX		-->>	7	33
+line: 18	 addr: 20	#		LOAD	B		-->>	3	32
+line: 19	 addr: 22	#		STORE	A		-->>	7	31
+line: 21	 addr: 24	#		LOAD	AUX		-->>	3	33
+line: 22	 addr: 26	#		STORE	B		-->>	7	32
+line: 23	 addr: 28	#		BR	FIBO		-->>	0	2
+line: 24	 addr: 30	#	FINAL	STOP			-->>	11
+line: 25	 addr: 31	#	A	CONST	0		-->>	0
+line: 26	 addr: 32	#	B	CONST	1		-->>	1
+line: 27	 addr: 33	#	AUX	SPACE			-->>	0
+line: 28	 addr: 34	#	NUMBER	SPACE			-->>	0
