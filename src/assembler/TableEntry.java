@@ -3,10 +3,12 @@ package assembler;
 public class TableEntry {
     private String label;
     private Integer address;
-    
-    public TableEntry(String label, Integer address) {
+    private Boolean isGlobal;
+
+    public TableEntry(String label, Integer address, Boolean isGlobal) {
         this.label = label;
         this.address = address;
+        this.isGlobal = isGlobal;
     }
 
     public String getLabel() {
@@ -23,5 +25,13 @@ public class TableEntry {
 
     public void setAddress(Integer address) {
         this.address = address;
+    }
+
+    public Boolean getIsGlobal() {
+        return isGlobal;
+    }
+
+    public void setIsGlobal(Boolean isGlobal) {
+        this.isGlobal = isGlobal;
     }
 }

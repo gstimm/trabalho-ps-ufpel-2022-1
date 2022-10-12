@@ -56,10 +56,10 @@ public class VirtualMachine {
         while (scanner.hasNextLine()){
             String linha = scanner.nextLine();
             String linha_separada[] = linha.split("\\|");
-            if (linha_separada.length == 0) return; // Arquivo com erro
+            if (linha_separada.length == 0) break; // Arquivo com erro
             String codigo_de_maquina[] = linha_separada[1].strip().split("\\s+");
             String modo_realocacao[] = linha_separada[0].strip().split("\\s+");
-            if (modo_realocacao.length != codigo_de_maquina.length) return; // Arquivo com erro
+            if (modo_realocacao.length != codigo_de_maquina.length) break; // Arquivo com erro
             for (int c = 0; c < codigo_de_maquina.length; c++){
                 if (Short.parseShort(modo_realocacao[c]) == 1){
                     memory.setMemoryPosition(next_index, (short) (Short.parseShort(codigo_de_maquina[c]) + start_position_of_code));

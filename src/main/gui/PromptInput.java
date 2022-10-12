@@ -17,6 +17,7 @@ public class PromptInput extends Application {
     public PromptInput(){
         value = 0;
         initialize();
+        getInputField();
     }
 
     @Override

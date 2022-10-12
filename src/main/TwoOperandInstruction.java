@@ -10,4 +10,5 @@ public interface TwoOperandInstruction extends OneOperandInstruction {
     public Set<AddressingMode> getOperand2AddressingModes();
     public AddressingMode getCurrentOperand2AddressingMode();
     public void setCurrentOperand2AddressingMode(short opcode) throws UndefinedAddressingMode;
+    public void setCurrentOperand2AddressingMode(AddressingMode mode) throws UndefinedAddressingMode;
 }

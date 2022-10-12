@@ -2,7 +2,6 @@ package main.gui;
 
 import javafx.stage.*;
 import javafx.scene.*;
-import javafx.scene.control.*;
 
 import javafx.application.Application;
 import javafx.fxml.*;

@@ -98,7 +98,7 @@
 
 //         try {
 //             //maquina_virtual.readFile(System.getProperty("java.class.path").split(";")[0] + "/main/file.txt");
-//             maquina_virtual.readFile(System.getProperty("java.class.path").split(";")[0] + "/assembler/test.OBJ");
+//             maquina_virtual.readFile("D:/Scripts/trabalho-ps-ufpel-2022-1/src/assembler/tests/test.OBJ");
 //         } catch (Exception e) {
 //             e.printStackTrace();
 //             System.exit(0);

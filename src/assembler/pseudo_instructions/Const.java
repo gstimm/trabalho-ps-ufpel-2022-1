@@ -36,5 +36,5 @@ public class Const extends PseudoInstruction implements OneOperandInstruction {
 
     @Override
     public void setCurrentOperand1AddressingMode(short opcode) throws UndefinedAddressingMode {}
-
+    public void setCurrentOperand1AddressingMode(AddressingMode mode) throws UndefinedAddressingMode {}
 }

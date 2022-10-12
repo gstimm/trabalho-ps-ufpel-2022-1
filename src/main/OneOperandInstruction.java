@@ -10,4 +10,5 @@ public interface OneOperandInstruction {
     public Set<AddressingMode> getOperand1AddressingModes();
     public AddressingMode getCurrentOperand1AddressingMode();
     public void setCurrentOperand1AddressingMode(short opcode) throws UndefinedAddressingMode;
+    public void setCurrentOperand1AddressingMode(AddressingMode mode) throws UndefinedAddressingMode;
 }

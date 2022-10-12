@@ -32,41 +32,23 @@ public class LineHandler {
             }
 
             if (tokens.length > 0) {
-                switch (tokens[0]) {
-                    case "*":
-                        this.isComentary = true;
-                        return;
-                    default:
-                        this.label = tokens[0];
-                        break;
+                if (tokens[0].equals("*")){
+                    this.isComentary = true;
+                    return;
                 }
+                this.label = tokens[0];
             }
             if (tokens.length > 1) {
-                switch (tokens[1]) {
-                    case "*":
-                        return;
-                    default:
-                        this.mnemonic = tokens[1];
-                        break;
-                }
+                if (tokens[1].equals("*")) return;
+                this.mnemonic = tokens[1];
             }
             if (tokens.length > 2) {
-                switch (tokens[2]) {
-                    case "*":
-                        return;
-                    default:
-                        this.operand1 = tokens[2];
-                        break;
-                }
+                if (tokens[2].equals("*")) return;
+                this.operand1 = tokens[2];
             }
             if (tokens.length > 3) {
-                switch (tokens[3]) {
-                    case "*":
-                        return;
-                    default:
-                        this.operand2 = tokens[3];
-                        break;
-                }
+                if (tokens[3].equals("*")) return;
+                this.operand2 = tokens[3];
             }
         }
     }
@@ -97,6 +79,13 @@ public class LineHandler {
 
     public boolean isComentary() {
         return isComentary;
+    }
+
+    public int getNumberOfOperandsRead(){
+        int result = 0;
+        if (operand1.isBlank() == false) result++;
+        if (operand2.isBlank() == false) result++;
+        return result;
     }
 
     @Override

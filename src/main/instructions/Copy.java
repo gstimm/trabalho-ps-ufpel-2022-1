@@ -56,9 +56,11 @@ public class Copy extends Instruction implements TwoOperandInstruction, ExecuteO
 
     public void setCurrentOperand1AddressingMode(short opcode) throws UndefinedAddressingMode {
         AddressingMode mode = AddressingMode.addressingModeByOpcode((short) (opcode & 0b0101_1111));
+        setCurrentOperand1AddressingMode(mode);
+    }
+    public void setCurrentOperand1AddressingMode(AddressingMode mode) throws UndefinedAddressingMode {
         if (this.operand1AddressingModes.contains(mode) == false) {
-            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString()
-                    + " in not valid for the the first operator on instruction " + this.getMnemonic());
+            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString()+ " in not valid for the instruction " + this.getMnemonic());
         }
         this.currentOperand1AddressingMode = mode;
     }
@@ -81,9 +83,11 @@ public class Copy extends Instruction implements TwoOperandInstruction, ExecuteO
 
     public void setCurrentOperand2AddressingMode(short opcode) throws UndefinedAddressingMode {
         AddressingMode mode = AddressingMode.addressingModeByOpcode((short) (opcode & 0b1011_1111));
+        setCurrentOperand2AddressingMode(mode);
+    }
+    public void setCurrentOperand2AddressingMode(AddressingMode mode) throws UndefinedAddressingMode {
         if (this.operand2AddressingModes.contains(mode) == false) {
-            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString()
-                    + " in not valid for the second operator on instruction " + this.getMnemonic());
+            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString()+ " in not valid for the instruction " + this.getMnemonic());
         }
         this.currentOperand2AddressingMode = mode;
     }

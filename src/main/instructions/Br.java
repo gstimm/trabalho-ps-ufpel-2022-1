@@ -47,12 +47,15 @@ public class Br extends Instruction implements OneOperandInstruction, ExecuteOpe
 
     public void setCurrentOperand1AddressingMode(short opcode) throws UndefinedAddressingMode {
         AddressingMode mode = AddressingMode.addressingModeByOpcode(opcode);
+        setCurrentOperand1AddressingMode(mode);
+    }
+    public void setCurrentOperand1AddressingMode(AddressingMode mode) throws UndefinedAddressingMode {
         if (this.operand1AddressingModes.contains(mode) == false) {
-            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString()
-                    + " in not valid for the instruction " + this.getMnemonic());
+            throw new UndefinedAddressingMode("The Addressing mode " + mode.toString()+ " in not valid for the instruction " + this.getMnemonic());
         }
         this.currentOperand1AddressingMode = mode;
     }
+
 
     @Override
     public String toString() {
