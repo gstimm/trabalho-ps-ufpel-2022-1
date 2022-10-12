@@ -61,7 +61,9 @@
           <items>
             <MenuItem mnemonicParsing="false" text="Open…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Assemble file" />
+                  <MenuItem mnemonicParsing="false" onAction="#assembleFile" text="Assemble file" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadProgram" text="Load Program" />
                   <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Close" />
             <SeparatorMenuItem mnemonicParsing="false" />
