@@ -1,22 +1,3 @@
-## Getting Started
-
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
-
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
-
 ## Rodando o montador
 Execute o arquivo .jar de  acordo com as instruções em *Rodando a interface gráfica* e no menu `file` existe a opção `assemble file` <br>
 Se o programa estiver totalmente contido dentro do mesmo arquivo e não necessita do ligador, você pode rodar o programa montado utilizando a opção `load file` e selecionando o arquivo `.OBJ` <br>
@@ -39,4 +20,8 @@ Exemplo:<br>
 
 `java -jar --module-path 'C:/Program Files/JavaFX/javafx-sdk-19/lib/' --add-modules javafx.controls,javafx.fxml .\trabalho-ps-ufpel-2022-1.jar` <br>
 
-Neste exemplo o SDK do JavaFX está localizado na pasta `C:/Program Files/JavaFX/`
+Neste exemplo o SDK do JavaFX está localizado na pasta `C:/Program Files/JavaFX/` <br>
+
+OBS.: <br>
+O arquivo `.jar` foi criado para a versão 18 do JDK, caso sua versão seja anterior, atualize ou crie outro arquivo `.jar` para sua versão <br>
+Você pode verificar sua verão utilizando o comando `java -version` <br>
