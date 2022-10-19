@@ -2,17 +2,17 @@ package main;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import assembler.Assembler;
 import javafx.application.*;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.*;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.InputEvent;
 import main.errors.UndefinedExecutionMode;
 import main.gui.*;
 import main.instructions.Stop;
@@ -28,6 +28,7 @@ public class Main extends Application {
     private int memoryMaximumDisplay = 1000;
 
     public static Stage stage;
+    public static String output = "";
 
     // User interaction Area
     @FXML
@@ -187,7 +188,8 @@ public class Main extends Application {
     }
 
     public void clearOutput() {
-        output_area.setText("");
+        Main.output = "";
+        output_area.setText(Main.output);
     }
 
     public void executeInstruction() {
@@ -314,12 +316,7 @@ public class Main extends Application {
     }
 
     public void updateOutput() {
-        output_area.setText("");
-        for (int c = 950; c < memoryMaximumDisplay; c++) {
-            if (memory.getMemoryPosition(c) != 0) {
-                output_area.setText(output_area.getText() + memory.getMemoryPosition(c));
-            }
-        }
+        output_area.setText(Main.output);
     }
 
     public void updatePC() {
@@ -372,10 +369,22 @@ public class Main extends Application {
         setupUI();
     }
     public static short readValue(){
-        TextInputDialog input = new TextInputDialog("Enter a value");
-        input.showAndWait();
-
-        short value = Short.parseShort(input.getResult());
-        return value;
+        FutureTask<Short> query = new FutureTask<Short>(new Callable<Short>() {
+                @Override
+                public Short call() throws Exception {
+                    TextInputDialog input = new TextInputDialog("Enter a value");
+                    input.showAndWait();
+                    short value = Short.parseShort(input.getResult());
+                    return value;
+                }
+            });
+        try {
+            Platform.runLater(query);
+            return query.get();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return (short) 0;
     }
 }

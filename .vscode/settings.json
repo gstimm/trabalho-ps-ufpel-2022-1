@@ -2,6 +2,7 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "C:\\Program Files\\JavaFX\\javafx-sdk-19\\lib\\**\\*.jar",
+        //"/home/jelson/Downloads/javafx-sdk-19/lib/*.jar"
     ],
     "java.project.outputPath": "bin",
     "java.dependency.packagePresentation": "hierarchical"

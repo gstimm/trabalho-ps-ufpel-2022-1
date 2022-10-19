@@ -10,19 +10,13 @@ import main.AddressingMode;
 import main.ExecuteOperation;
 
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
 
-import javafx.application.Platform;
-import javafx.scene.control.TextInputDialog;
 
 public class Read extends Instruction implements OneOperandInstruction, ExecuteOperation {
     private final Set<AddressingMode> operand1AddressingModes;
     private short operand1;
     private AddressingMode currentOperand1AddressingMode;
-    final FutureTask query;
 
     public Read() {
         super("READ", 12, 2, 1);
@@ -32,41 +26,10 @@ public class Read extends Instruction implements OneOperandInstruction, ExecuteO
         this.operand1 = 0;
         this.currentOperand1AddressingMode = null;
 
-        query = new FutureTask(new Callable() {
-            @Override
-            public Object call() throws Exception {
-                return Main.readValue();
-            }
-        });
     }
 
     public void doOperation(Registers registers, Memory memory) {
-        // Criar popup e pedir a entrada
-
-        // PromptInput janela_Input = new PromptInput();
-        // janela_Input.showWindow("");
-        // memory.setMemoryPosition(operand1, janela_Input.getShort());
-
-        Platform.runLater(query);
-        short value = 0;
-        try {
-            value = (short)(query.get());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-        memory.setMemoryPosition(operand1, value);
-
-        // TextInputDialog input = new TextInputDialog("Enter a value");
-        // input.show();
-
-        // short value = Short.parseShort(input.getResult());
-        // memory.setMemoryPosition(operand1, value);
-
-        // Scanner scanner = new Scanner(System.in);
-        // short value = scanner.nextShort();
-        // memory.setMemoryPosition(operand1, (short) value);
-        // scanner.close();
+        memory.setMemoryPosition(operand1, Main.readValue());
     }
 
     public short getOperand1() {

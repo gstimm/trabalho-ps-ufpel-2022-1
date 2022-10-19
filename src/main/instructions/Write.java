@@ -1,6 +1,7 @@
 package main.instructions;
 
 import main.Instruction;
+import main.Main;
 import main.Memory;
 import main.OneOperandInstruction;
 import main.Registers;
@@ -15,7 +16,6 @@ public class Write extends Instruction implements OneOperandInstruction, Execute
     private final Set<AddressingMode> operand1AddressingModes;
     private short operand1;
     private AddressingMode currentOperand1AddressingMode;
-    private int last_used_index = 950;
 
     public Write() {
         super("WRITE", 8, 2, 1);
@@ -29,7 +29,7 @@ public class Write extends Instruction implements OneOperandInstruction, Execute
 
     public void doOperation(Registers registers, Memory memory) {
         System.out.print((int) memory.getMemoryPosition(operand1));
-        memory.setMemoryPosition(last_used_index++, memory.getMemoryPosition(operand1));
+        Main.output += " " + (int) memory.getMemoryPosition(operand1);
     }
 
     public short getOperand1() {
