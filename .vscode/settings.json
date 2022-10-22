@@ -1,9 +1,15 @@
 {
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "C:\\Program Files\\JavaFX\\javafx-sdk-19\\lib\\**\\*.jar",
-        //"/home/jelson/Downloads/javafx-sdk-19/lib/*.jar"
-    ],
-    "java.project.outputPath": "bin",
-    "java.dependency.packagePresentation": "hierarchical"
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx-swt.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.web.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.swing.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.media.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.graphics.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.fxml.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.controls.jar",
+    "/home/juathancoelhoduarte/javafx-sdk-19/lib/javafx.base.jar"
+  ],
+  "java.project.outputPath": "bin",
+  "java.dependency.packagePresentation": "hierarchical"
 }
