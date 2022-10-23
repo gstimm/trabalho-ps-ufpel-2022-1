@@ -60,6 +60,45 @@ public class LineHandlerMacro {
     }
   }
 
+  public void readLine(String line) throws LineTooLong, FailToReadTokens {
+    this.isComentary = false;
+    this.operands.clear();
+
+    if(line.length() > Assembler.MAX_LINE_SIZE){
+      throw new LineTooLong("Line is bigger than the defined maximum size. Line size: " + line.length() + ", maximum allowed line size: " + Assembler.MAX_LINE_SIZE + "!!!");
+    }
+
+    String tokens[] = line.split("\\s+");
+
+    if(tokens.length == 0) {
+      throw new FailToReadTokens("Not possible to read the line tokens");
+    }
+
+    if (tokens.length > 0) {
+      if (tokens[0].equals("*")){
+          this.isComentary = true;
+          return;
+      }
+      this.label = tokens[0];
+    }
+
+    if (tokens.length > 1) {
+      if(tokens[1].equals("*")){
+        return;
+      }
+      this.mnemonic = tokens[1];
+    }
+
+    if (tokens.length > 2) {
+      for (int i = 2; i < tokens.length; i++) {
+        if(tokens[1].equals("*")){
+          return;
+        }
+        this.operands.add(tokens[i]);
+      }
+    }
+  }
+
   public void resetVaules() {
     this.label = "";
     this.mnemonic = "";

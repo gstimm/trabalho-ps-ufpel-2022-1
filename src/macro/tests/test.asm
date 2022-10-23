@@ -1,11 +1,19 @@
     MACRO
-    SOMA FOO, BAR, RESULT
-    LOAD    FOO
+    SOMA A, BAR, RESULT
+    LOAD    A
+    MACRO
+    NADA    I, J
+    WRITE   J
+    READ    I
+    STORE   A
+    MEND
+    STORE   A
     ADD     BAR
     STORE   RESULT
     MEND
     SOMA N1, N2, SAIDA
     WRITE SAIDA
+    NADA N2, SAIDA
 CONST   N1  9
 CONST   N2  1
 SPACE   SAIDA

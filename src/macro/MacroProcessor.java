@@ -16,6 +16,7 @@ public class MacroProcessor {
         this.currentState = State.COPY;
         this.levelCounter = 0;
         this.macrosDefinition = new Hashtable<String,Macro>();
+        current_defining_macro = null;
     }
 
     public void process(String filename) throws FileNotFoundException, Exception {
@@ -28,49 +29,73 @@ public class MacroProcessor {
         while (scanner.hasNextLine()) {
             lineHandler.readLine(scanner);
 
-            // Verificar o mnemônico
-            String mnemonic = lineHandler.getMnemonic();
-            String label = lineHandler.getLabel();
-            ArrayList<String> tokens = lineHandler.getOperands();
-            
-            // Verifica se é definição de macro
-            if (mnemonic.equals("MACRO")){
-                levelCounter++;
-                if (currentState == State.COPY){
-                    currentState = State.DEFINITION;
-                    if (macrosDefinition.containsKey(label)) {
-                        macrosDefinition.remove(label);
-                    }
-                    lineHandler.readLine(scanner);
-                    String macro_name = lineHandler.getMnemonic();
-                    tokens = lineHandler.getOperands();
-                    Macro macro = new Macro(macro_name, tokens);
-                    this.current_defining_macro = macro;
-                    macrosDefinition.put(macro_name, macro);
-                    continue;   
-                }
-            } else if (mnemonic.equals("MEND")) {
-                levelCounter--;
-                if (levelCounter == 0){
-                    currentState = State.COPY;
-                    continue;
-                }
-            } else if (macrosDefinition.containsKey(mnemonic)) {
-                Macro macro = macrosDefinition.get(mnemonic);
-                macro.setActualParamenter(tokens);
-                String expanded = macro.expand();
-                output_file.write(expanded);
-                continue;
-            }
-            
-            if (this.currentState == State.DEFINITION) {
-                current_defining_macro.appendToBody(lineHandler.toString() + "\n");
-            }
-            else {
-                output_file.write(lineHandler.toString() + "\n");
-            }
+            String line_to_write = processLine(lineHandler);
+
+            output_file.write(line_to_write);
         }
         output_file.close();
     }
 
+    public String expandMacro(String macro_name, ArrayList<String> parameters) throws Exception {
+        String write_output = "";
+        LineHandlerMacro lineHandlerMacro = new LineHandlerMacro();
+        Macro macro = macrosDefinition.get(macro_name);
+        macro.setActualParamenter(parameters);
+        String expanded = macro.expand();
+        String lines[] = expanded.split("\\n");
+        for (String line : lines) {
+            lineHandlerMacro.readLine(line);
+            write_output += processLine(lineHandlerMacro);
+        }
+        return write_output;
+    }
+
+    private String processLine(LineHandlerMacro lineHandlerMacro) throws Exception {
+        // Verificar o mnemônico
+        String output = "";
+        String mnemonic = lineHandlerMacro.getMnemonic();
+        String label = lineHandlerMacro.getLabel();
+        ArrayList<String> tokens = lineHandlerMacro.getOperands();
+        
+        // Verifica se é definição de macro
+        if (mnemonic.equals("MACRO")) {
+            levelCounter++;
+            if (currentState == State.COPY) {
+                currentState = State.DEFINITION;
+                if (macrosDefinition.containsKey(label)) {
+                    macrosDefinition.remove(label);
+                }
+                current_defining_macro = null;
+                return output;
+            }
+        } else if (mnemonic.equals("MEND")) {
+            levelCounter--;
+            if (levelCounter == 0){
+                currentState = State.COPY;
+                current_defining_macro = null;
+                return output;
+            }
+        } else if (macrosDefinition.containsKey(mnemonic)) {
+            this.currentState = State.COPY;
+            return expandMacro(mnemonic, tokens);
+        }
+        
+        if (this.currentState == State.DEFINITION) {
+            if (current_defining_macro == null) {
+                String macro_name = lineHandlerMacro.getMnemonic();
+                tokens = lineHandlerMacro.getOperands();
+                Macro macro = new Macro(macro_name, tokens);
+                this.current_defining_macro = macro;
+                macrosDefinition.put(macro_name, macro);
+            }
+            else {
+                current_defining_macro.appendToBody(lineHandlerMacro.toString() + "\n", levelCounter);
+            }
+        }
+        else {
+            output = lineHandlerMacro.toString() + "\n";
+        }
+
+        return output;
+    }
 }

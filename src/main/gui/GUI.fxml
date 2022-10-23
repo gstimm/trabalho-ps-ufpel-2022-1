@@ -45,6 +45,7 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -213,11 +214,8 @@
                         <Color red="0.624" green="0.624" blue="0.624" fx:id="x221" />
                      </textFill>
                   </Label>
-                  <TextField fx:id="output_area" alignment="TOP_LEFT" editable="false" layoutX="26.0" layoutY="64.0" prefHeight="88.0" prefWidth="171.0">
-                     <cursor>
-                        <Cursor fx:constant="DEFAULT" />
-                     </cursor></TextField>
                   <Button fx:id="clear_output" layoutX="145.0" layoutY="162.0" mnemonicParsing="false" onAction="#clearOutput" text="Clear" />
+                  <TextArea fx:id="output_area" editable="false" layoutX="11.0" layoutY="50.0" prefHeight="107.0" prefWidth="200.0" wrapText="true" />
                </children>
             </AnchorPane>
       </items>
