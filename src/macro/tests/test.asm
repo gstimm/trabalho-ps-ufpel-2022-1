@@ -1,8 +1,8 @@
     MACRO
-    SOMA A, B, RESULT
-    LOAD A
-    ADD B
-    STORE RESULT
+    SOMA FOO, BAR, RESULT
+    LOAD    FOO
+    ADD     BAR
+    STORE   RESULT
     MEND
     SOMA N1, N2, SAIDA
     WRITE SAIDA

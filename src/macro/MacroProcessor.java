@@ -35,9 +35,9 @@ public class MacroProcessor {
             
             // Verifica se é definição de macro
             if (mnemonic.equals("MACRO")){
+                levelCounter++;
                 if (currentState == State.COPY){
                     currentState = State.DEFINITION;
-                    levelCounter = 1;
                     if (macrosDefinition.containsKey(label)) {
                         macrosDefinition.remove(label);
                     }
@@ -53,8 +53,8 @@ public class MacroProcessor {
                 levelCounter--;
                 if (levelCounter == 0){
                     currentState = State.COPY;
+                    continue;
                 }
-                continue;
             } else if (macrosDefinition.containsKey(mnemonic)) {
                 Macro macro = macrosDefinition.get(mnemonic);
                 macro.setActualParamenter(tokens);
@@ -72,7 +72,5 @@ public class MacroProcessor {
         }
         output_file.close();
     }
-
-    // public void expandMacro(String macroName, )
 
 }
