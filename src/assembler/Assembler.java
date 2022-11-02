@@ -13,17 +13,11 @@ import main.errors.*;
 public class Assembler {
     private HashMap<String, Instruction> instructionsTable;
     private HashMap<String, PseudoInstruction> pseudoInstructionsTable;
+    private Tables tables;
     private int lineCounter;
     private int addressCounter;
     public static final int MAX_LINE_SIZE = 80;
     public static final int MAX_LABEL_SIZE = 8;
-
-    // Tabela que contém os símbolos definidos internamente para uso interno e 
-    // os símbolos que são definidos internamente para uso interno e externo
-    private HashMap<String, TableEntry> definitionTable;
-    
-    // Símbolos usados internamente e definidos em outro módulo
-    private HashMap<String, InternalUseTableEntry> internalUseTable;
 
     public Assembler(){
         this.instructionsTable = new HashMap<>();
@@ -81,8 +75,9 @@ public class Assembler {
         aux_instruction = new Write();
         instructionsTable.put(aux_instruction.getMnemonic(), aux_instruction);
 
-        this.definitionTable = new HashMap<>();
-        this.internalUseTable = new HashMap<>();
+        this.tables = new Tables();
+        // this.definitionTable = new HashMap<>();
+        // this.internalUseTable = new HashMap<>();
     }
 
     public void assemble(String fileName) {
@@ -101,6 +96,10 @@ public class Assembler {
     {
         Scanner scanner = new Scanner(new File(filename));
         LineHandler lineHandler = new LineHandler();
+        
+        HashMap<String, TableEntry> definitionTable = tables.getDefitionsTable();
+        HashMap<String, InternalUseTableEntry> internalUseTable = tables.getInternalUseTable();
+        
         while (scanner.hasNextLine()) {
             try {
                 lineHandler.readLine(scanner);
@@ -121,7 +120,7 @@ public class Assembler {
 
                 // Trata os rótulos
                 if (label.isBlank() == false){
-                    handleLabel(label);
+                    handleLabel(label, definitionTable);
                 }
 
                 // Trata as pseudo instruções e as intruções
@@ -136,6 +135,7 @@ public class Assembler {
                             if (operand1.isBlank() == false){
                                 if (isStringInteger(operand1)){
                                     this.addressCounter = parseNumber(operand1);
+                                    tables.setModuleStart(this.addressCounter);
                                 }
                                 else {
                                     throw new MalformedToken("ERROR at line " + lineCounter + ": Expected a number after START, got <" + operand1 + ">!!!");
@@ -156,11 +156,13 @@ public class Assembler {
                                 throw new UndefinedLabel("ERROR at line " + lineCounter + ": Found a END pseudo instruction, but not all labels have been defined yet!!! Undefined labels are: "+ getUndefinedLabels(definitionTable));
                             }
                             // Pode ser apenas um warning
-                            if (verifyAllInternalUseSymbolsAreUsed() == false){
-                                throw new UnusedSymbols("ERROR at line " + lineCounter + ": Found the END of file, but there are symbols marked as internal use from other modules not being used!!! Symbols are: "+ getUnusedInternalSymbolTable());
+                            if (verifyAllInternalUseSymbolsAreUsed(internalUseTable) == false){
+                                throw new UnusedSymbols("ERROR at line " + lineCounter + ": Found the END of file, but there are symbols marked as internal use from other modules not being used!!! Symbols are: "+ getUnusedInternalSymbolTable(internalUseTable));
                             }
-                            this.saveGlobalSymbols(filename);
-                            this.saveInternalUseTable(filename);
+                            
+                            this.tables.setModuleSize(this.addressCounter - this.tables.getModuleStart());
+                            this.tables.saveToFile(filename);
+                            
                             this.lineCounter = 1;
                             this.addressCounter = 0;
                             scanner.close();
@@ -298,6 +300,10 @@ public class Assembler {
         FileWriter list_file = new FileWriter(list_output);
         
         LineHandler lineHandler = new LineHandler();
+
+        HashMap<String, TableEntry> definitionTable = tables.getDefitionsTable();
+        HashMap<String, InternalUseTableEntry> internalUseTable = tables.getInternalUseTable();
+
         while (scanner.hasNextLine()) {
             try {
                 lineHandler.readLine(scanner);
@@ -539,7 +545,7 @@ public class Assembler {
             result = Integer.parseInt(number, 2, number.length() - 1, 16);
         }
         else if (number.matches("@\\d+")){
-            // Literal em decimal what the fuck??
+            result = Integer.parseInt(number.substring(1));
         }
         else {
             throw new NumberFormatException("Unknown number format " + number);
@@ -594,44 +600,20 @@ public class Assembler {
         }
         return result;
     }
-    private void saveInternalUseTable(String filename) throws IOException {
-        File output = new File(filename.substring(0, filename.lastIndexOf(".")) + ".USE");
-        output.createNewFile();
-        FileWriter use_table_file = new FileWriter(output);
-        
-        // Pular os símbolos que não são utilizados?
-        for (InternalUseTableEntry entry : internalUseTable.values()) {
-            use_table_file.write(entry.getLabel() + "\t" + entry.getOccurences().toString() + "\n");
-        }
-        use_table_file.close();
-    }
-    private void saveGlobalSymbols(String filename) throws IOException {
-        File output = new File(filename.substring(0, filename.lastIndexOf(".")) + ".GLO");
-        output.createNewFile();
-        FileWriter global_definition_table = new FileWriter(output);
-        
-        // Pular os símbolos que não são utilizados?
-        for (TableEntry entry : definitionTable.values()) {
-            if (entry.getIsGlobal()){
-                global_definition_table.write(entry.getLabel() + "\t" + entry.getAddress() + "\n");
-            }
-        }
-        global_definition_table.close();
-    }
-    private boolean verifyAllInternalUseSymbolsAreUsed(){
+    private boolean verifyAllInternalUseSymbolsAreUsed(HashMap<String, InternalUseTableEntry> internalUseTable){
         for (InternalUseTableEntry entry : internalUseTable.values()) {
             if (entry.getOccurences().isEmpty()) return false;
         }
         return true;
     }
-    private String getUnusedInternalSymbolTable(){
+    private String getUnusedInternalSymbolTable(HashMap<String, InternalUseTableEntry> internalUseTable){
         String result = "";
         for (InternalUseTableEntry entry : internalUseTable.values()) {
             if (entry.getOccurences().isEmpty()) result += entry.getLabel() + " ";
         }
         return result;
     }
-    private void handleLabel(String label) throws MalformedToken, RedefinedSymbol {
+    private void handleLabel(String label, HashMap<String, TableEntry> definitionTable) throws MalformedToken, RedefinedSymbol {
         if (checkLabel(label) == false){
             throw new MalformedToken("ERROR at line " + lineCounter + ": The label <" + label + "> is malformed");
         }
