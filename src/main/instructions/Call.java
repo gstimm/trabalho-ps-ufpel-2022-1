@@ -28,7 +28,7 @@ public class Call extends Instruction implements OneOperandInstruction, ExecuteO
     public void doOperation(Registers registers, Memory memory) {
         registers.incrementSP((short) 1);
         memory.setMemoryPosition(registers.getSP(), registers.getPC());
-        registers.setPC(memory.getMemoryPosition(operand1));
+        registers.setPC(operand1);
     }
 
     public short getOperand1() {

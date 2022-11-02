@@ -8,6 +8,13 @@
         "type": "java",
         "name": "Launch Main",
         "request": "launch",
+        "mainClass": "linker.Main",
+        "projectName": "trabalho-ps-ufpel-2022-1_9ac79377"
+    },
+    {
+        "type": "java",
+        "name": "Launch Main",
+        "request": "launch",
         "mainClass": "macro.Main",
         "projectName": "trabalho-ps-ufpel-2022-1_9ac79377"
     },

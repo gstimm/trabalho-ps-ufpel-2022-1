@@ -1,0 +1,13 @@
+M1  START   2
+    INTDEF  ZERO
+UM  INTUSE
+DOBRO   INTUSE
+    LOAD    ZERO
+    ADD     UM
+    ADD     UM
+    CALL DOBRO
+    STORE   ZERO
+    WRITE   ZERO
+    STOP
+ZERO    CONST   0
+    END
