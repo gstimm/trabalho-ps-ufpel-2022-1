@@ -1,5 +1,0 @@
-line: 4	 addr: 0	#	DOBRO	STORE	COPIA		-->>	7	6
-line: 5	 addr: 2	#		ADD	COPIA		-->>	2	6
-line: 6	 addr: 4	#		RET			-->>	9
-line: 7	 addr: 5	#	UM	CONST	1		-->>	1
-line: 8	 addr: 6	#	COPIA	SPACE			-->>	0

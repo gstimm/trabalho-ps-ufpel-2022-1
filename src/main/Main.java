@@ -2,6 +2,7 @@ package main;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -10,6 +11,8 @@ import javafx.application.*;
 import javafx.collections.ObservableList;
 import javafx.fxml.*;
 import javafx.stage.*;
+import linker.Linker;
+import macro.MacroProcessor;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -84,6 +87,10 @@ public class Main extends Application {
     @FXML
     TableColumn<MemoryCell, Short> value_stack;
 
+    // Errors area
+    @FXML
+    Label errors_area;
+    
     public static void main(String[] args) {
         launch(args);
     }
@@ -383,6 +390,9 @@ public class Main extends Application {
         FileChooser file_chooser = new FileChooser();
         file_chooser.setTitle("Select a File to Load");
         File file = file_chooser.showOpenDialog(Main.stage);
+        
+        if (file == null) {return;}
+
         try {
             maquina_virtual.readFile(file.getAbsolutePath());
         }
@@ -393,6 +403,100 @@ public class Main extends Application {
         }
         setupUI();
     }
+
+    public void buildAndRun() {
+        FileChooser file_chooser = new FileChooser();
+        file_chooser.setTitle("Select a Files to Build and Execute");
+        List<File> file = file_chooser.showOpenMultipleDialog(Main.stage);
+        
+        // Process macro and assemble each file
+        for (File file_choosed : file) {
+            MacroProcessor macroProcessor = new MacroProcessor();
+            Assembler assembler = new Assembler();
+            try {
+                macroProcessor.process(file_choosed.getAbsolutePath());
+            }
+            catch (Exception e) {
+                errors_area.setText("ERROR processing macro of file " + file_choosed.getAbsolutePath() + " " + e.getMessage());
+            }
+            String expanded_name = file_choosed.getAbsolutePath().substring(0, file_choosed.getAbsolutePath().length() - 4) + ".MXF";
+            
+            try {
+                assembler.assemble(expanded_name);
+            }
+            catch (Exception e) {
+                errors_area.setText("ERROR assembling file " + expanded_name + " " + e.getMessage());
+            }
+        }
+
+        ArrayList<String> filesToLink = new ArrayList<>();
+        
+        // Link the modules
+        for (File file_choosed : file) {
+            filesToLink.add(file_choosed.getAbsolutePath().substring(0, file_choosed.getAbsolutePath().length() - 4) + ".OBJ");
+        }
+        
+        try {
+            Linker linker = new Linker(filesToLink);
+            linker.link();
+        } catch (Exception e) {
+            errors_area.setText("ERROR linking the files " + e.getMessage());
+        }
+
+        try {
+            maquina_virtual.readFile(file.get(0).getAbsolutePath().substring(0, file.get(0).getAbsolutePath().length() - 4) + ".HPX");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            exitApplication();
+            System.exit(-1);
+        }
+        setupUI();
+    }
+
+    public void processMacro() {
+        FileChooser file_chooser = new FileChooser();
+        file_chooser.setTitle("Select a File to Process");
+        File file = file_chooser.showOpenDialog(Main.stage);
+        MacroProcessor macroProcessor = new MacroProcessor();
+        
+        try {
+            macroProcessor.process(file.getAbsolutePath());
+        }
+        catch (Exception e) {
+            errors_area.setText("ERROR processing the macros from file " + file.getAbsolutePath() + " " + e.getMessage());
+        }
+    }
+
+    public void linkModules(){
+        FileChooser file_chooser = new FileChooser();
+        file_chooser.setTitle("Select a File to Link");
+        List<File> file = file_chooser.showOpenMultipleDialog(Main.stage);
+        ArrayList<String> filesToLink = new ArrayList<>();
+        
+        for (File file_choosed : file) {
+            if (file_choosed != null) {
+                filesToLink.add(file_choosed.getAbsolutePath().substring(0, file_choosed.getAbsolutePath().length() - 4) + ".OBJ");
+            }
+        }
+        
+        try {
+            Linker linker = new Linker(filesToLink);
+            linker.link();
+        } catch (Exception e) {
+            errors_area.setText("ERROR linking the files " + e.getMessage());
+        }
+
+    }
+
+    public void resetMachine(){
+        registers.reset();
+        memory.clearMemory();
+        maquina_virtual.initMachine();
+        clearOutput();
+        setupUI();
+    }
+
     public static short readValue(){
         FutureTask<Short> query = new FutureTask<Short>(new Callable<Short>() {
                 @Override

@@ -77,4 +77,13 @@ public class Registers {
     public void incrementPC(){
         this.PC += 1;
     }
+
+    public void reset(){
+        this.PC = 0;
+        this.SP = 0;
+        this.ACC = 0;
+        this.MOP = 0;
+        this.RI = 0;
+        this.RE = 0;
+    }
 }

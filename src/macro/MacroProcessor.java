@@ -20,7 +20,7 @@ public class MacroProcessor {
     }
 
     public void process(String filename) throws FileNotFoundException, Exception {
-        File output = new File(filename.substring(0, filename.length() - 4) + "_EXPANDED.ASM");
+        File output = new File(filename.substring(0, filename.length() - 4) + ".MXF");
         output.createNewFile();
         FileWriter output_file = new FileWriter(output);
         
@@ -29,14 +29,15 @@ public class MacroProcessor {
         while (scanner.hasNextLine()) {
             lineHandler.readLine(scanner);
 
-            String line_to_write = processLine(lineHandler);
-
-            output_file.write(line_to_write);
+            if (lineHandler.isComentary() == false) {
+                String line_to_write = processLine(lineHandler);
+                output_file.write(line_to_write);
+            }
         }
         output_file.close();
     }
 
-    public String expandMacro(String macro_name, ArrayList<String> parameters) throws Exception {
+    private String expandMacro(String macro_name, ArrayList<String> parameters) throws Exception {
         String write_output = "";
         LineHandlerMacro lineHandlerMacro = new LineHandlerMacro();
         Macro macro = macrosDefinition.get(macro_name);

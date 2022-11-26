@@ -1,0 +1,12 @@
+line: 1	 addr: 0	#		LOAD	N1		-->>	3	17
+line: 2	 addr: 2	#		STORE	N1		-->>	7	17
+line: 3	 addr: 4	#		ADD	N2		-->>	2	18
+line: 4	 addr: 6	#		STORE	SAIDA		-->>	7	19
+line: 5	 addr: 8	#		WRITE	SAIDA		-->>	8	19
+line: 6	 addr: 10	#		WRITE	SAIDA		-->>	8	19
+line: 7	 addr: 12	#		READ	N2		-->>	12	18
+line: 8	 addr: 14	#		STORE	N1		-->>	7	17
+line: 9	 addr: 16	#		STOP			-->>	11
+line: 10	 addr: 17	#	N1	CONST	9		-->>	9
+line: 11	 addr: 18	#	N2	CONST	1		-->>	1
+line: 12	 addr: 19	#	SAIDA	SPACE			-->>	0

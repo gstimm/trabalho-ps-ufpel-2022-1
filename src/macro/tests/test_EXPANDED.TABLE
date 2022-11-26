@@ -1,8 +1,6 @@
 [SIZE]
-SIZE = 7
+SIZE = 20
 [START]
 START = 0
 [GLOBAL]
-DOBRO = 0
-UM = 5
 [USES]

@@ -38,8 +38,8 @@ public class Memory {
                 memory.add(c, (short) 0);
             }
         }
-        else {
-            memory.clear();
+        for (int c = 0; c < memory.size(); c++){
+            memory.set(c, (short) 0);
         }
     }
 

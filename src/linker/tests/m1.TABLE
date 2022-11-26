@@ -1,9 +1,0 @@
-[SIZE]
-SIZE = 14
-[START]
-START = 2
-[GLOBAL]
-ZERO = 15
-[USES]
-DOBRO = [9]
-UM = [5, 7]
